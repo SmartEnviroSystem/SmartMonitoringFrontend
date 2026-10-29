@@ -17,14 +17,44 @@ window['all_jobs_options'].plugins.set('TableActions', {
             actions: [
                 {
                     id: 'show',
-                    icon: 'search',
-                    title: 'Datensatz anzeigen',
+                    icon: 'history',
+                    title: 'Show Job History',
                     onClick: show
-                }
+                },
+                {
+                    id: 'play',
+                    icon: 'play',
+                    title: 'Start Job',
+                    onClick: start
+                },
+                {
+                    id: 'replay',
+                    icon: 'refresh',
+                    title: 'Replay Job',
+                    onClick: replay
+                },
+                {
+                    id: 'stopJob',
+                    icon: 'ban',
+                    title: 'Stop Job',
+                    onClick: stopJob
+                },
             ]
         }
     );
 
-function show(id) {
-    console.log('Datensatz:', id);
+function show(record) {
+    console.log('show:', record.set_json);
+}
+
+function start(record) {
+    console.log('start:', record.set_json);
+}
+
+function replay(record) {
+    console.log('replay:', record.set_json);
+}
+
+function stopJob(record) {
+    console.log('stop:', record.set_json);
 }
