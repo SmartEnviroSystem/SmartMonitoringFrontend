@@ -36,6 +36,8 @@ var app_de = {
     menu_datastat_object: 'Einzel Objekt-Statistik',
     menu_datastat_missing: 'Zeiträume ohne Daten',
     menu_datastat_groups: 'Datengruppen',
+
+    menu_jobs: 'Jobs',
     
     menu_labeling: 'Labeling',
     menu_label: 'Label',
@@ -630,6 +632,8 @@ var app_de = {
     media_upload_mediapreview_header: 'Vorschau',
     media_upload_noselect: 'Bitte w&auml;hlen Sie eine Objekt aus um eine Media Datei hochzuladen.',
     media_upload_notavail: 'Die Funktion ist f&uuml;r das ausgew&auml;hlte Objekt nicht verf&uuml;gbar. Bitte kontaktiere den Administrator.',
+
+    job_list_headline: 'Verwalte Jobs',
 
     device_index_title: '',
     device_welcome: 'Dein Ger&auml;t:',
