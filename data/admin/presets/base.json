@@ -1035,17 +1035,17 @@
                         },
                         {
                             "id": 601,
-                            "ckey": "datafunc_stat_database",
+                            "ckey": "func_datastat_database",
                             "active": false
                         },
                         {
                             "id": 602,
-                            "ckey": "datafunc_stat_objects",
+                            "ckey": "func_datastat_objects",
                             "active": false
                         },
                         {
                             "id": 603,
-                            "ckey": "datafunc_stat_object",
+                            "ckey": "func_datastat_object",
                             "active": false
                         },
                         
