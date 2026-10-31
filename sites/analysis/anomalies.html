@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <title swac_lang="data_anomalies_title">Data &gt; Anomalies</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" sizes="32x32" href="../../files/icons/32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../../files/icons/16x16.png">
+        <link rel="stylesheet" href="../../css/global.css" />
+
+        <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css" />
+        <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
+        <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
+        <script src="/SWAC/swac/swac.js" type="module"></script>
+
+        <script src="../../js/analysis/anomalies.js" type="module"></script>
+
+        <link rel="stylesheet" href="../../customisations/global.css" />
+    </head>
+    <body>
+        <nav id="main_navigation" class="swac_navigation_head" swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC"></nav>
+        <div id="userform" swa="User"></div>
+        <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
+
+        <!--
+            Info icons: the uk-tooltip value is a translation key. SWAC replaces it
+            with the text from app_de.js / app_en.js. Tooltip texts must not contain
+            ':' or ';' because UIkit would read them as tooltip options.
+        -->
+        <div class="section">
+            <article class="uk-article">
+                <h1 class="uk-heading-bullet" swac_lang="data_anomalies_headline">Anomaly detection</h1>
+                <p class="uk-article-meta" swac_lang="data_anomalies_desc">Find values that change too fast, stay constant for too long or jump between extremes.</p>
+
+                <form id="anomalies_form" class="uk-form-stacked" autocomplete="off">
+
+                    <!-- Step 1: Which data should be analysed -->
+                    <fieldset class="uk-fieldset uk-margin">
+                        <legend class="uk-legend" swac_lang="data_anomalies_data">Data</legend>
+                        <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-4@m" uk-grid>
+                            <div>
+                                <label class="uk-form-label" for="anomalies_device"><span swac_lang="data_anomalies_device">Device</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_device" tabindex="0"></span></label>
+                                <select id="anomalies_device" class="uk-select" required>
+                                    <option value="" swac_lang="data_anomalies_loading">Loading ...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="uk-form-label" for="anomalies_attribute"><span swac_lang="data_anomalies_attribute">Measured value</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_attribute" tabindex="0"></span></label>
+                                <select id="anomalies_attribute" class="uk-select" required disabled>
+                                    <option value="" swac_lang="data_anomalies_select_device_first">Select device first</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="uk-form-label" for="anomalies_from"><span swac_lang="data_anomalies_from">From</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_from" tabindex="0"></span></label>
+                                <input id="anomalies_from" class="uk-input" type="datetime-local" required>
+                            </div>
+                            <div>
+                                <label class="uk-form-label" for="anomalies_to"><span swac_lang="data_anomalies_to">Till</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_to" tabindex="0"></span></label>
+                                <input id="anomalies_to" class="uk-input" type="datetime-local" required>
+                            </div>
+                        </div>
+
+                        <ul uk-accordion class="uk-margin-small-top">
+                            <li>
+                                <a class="uk-accordion-title uk-text-small" href="#" swac_lang="data_anomalies_advanced">Advanced settings</a>
+                                <div class="uk-accordion-content">
+                                    <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-4@m" uk-grid>
+                                        <div>
+                                            <label class="uk-form-label" for="anomalies_timeattr"><span swac_lang="data_anomalies_timeattr">Time attribute</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_timeattr" tabindex="0"></span></label>
+                                            <select id="anomalies_timeattr" class="uk-select" disabled></select>
+                                        </div>
+                                        <div>
+                                            <label class="uk-form-label" for="anomalies_measurefreq"><span swac_lang="data_anomalies_measurefreq">Expected interval (seconds)</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_measurefreq" tabindex="0"></span></label>
+                                            <input id="anomalies_measurefreq" class="uk-input" type="number" min="1" step="1" placeholder="data_anomalies_auto">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </fieldset>
+
+                    <!-- Step 2: Which checks with which parameters -->
+                    <fieldset class="uk-fieldset uk-margin">
+                        <legend class="uk-legend" swac_lang="data_anomalies_checks">Checks</legend>
+                        <p class="uk-text-meta" swac_lang="data_anomalies_auto_hint">Leave a parameter empty to let it be determined automatically.</p>
+
+                        <div class="uk-grid-small uk-child-width-1-3@m uk-grid-match" uk-grid>
+                            <div>
+                                <div class="uk-card uk-card-default uk-card-small uk-card-body">
+                                    <label><input class="uk-checkbox anomalies_check" type="checkbox" value="rateofchange" checked> <span class="uk-text-bold" swac_lang="data_anomalies_rateofchange">Changes too fast</span></label>
+                                    <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_rateofchange" tabindex="0"></span>
+                                    <div class="anomalies_params uk-margin-small-top" data-check="rateofchange">
+                                        <label class="uk-form-label" for="anomalies_maxdelta"><span swac_lang="data_anomalies_maxdelta">Max. change per minute</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_maxdelta" tabindex="0"></span></label>
+                                        <input id="anomalies_maxdelta" name="maxdelta" class="uk-input uk-form-small" type="number" min="0" step="any" placeholder="data_anomalies_auto">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="uk-card uk-card-default uk-card-small uk-card-body">
+                                    <label><input class="uk-checkbox anomalies_check" type="checkbox" value="flatline" checked> <span class="uk-text-bold" swac_lang="data_anomalies_flatline">Constant for too long</span></label>
+                                    <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_flatline" tabindex="0"></span>
+                                    <div class="anomalies_params uk-margin-small-top" data-check="flatline">
+                                        <label class="uk-form-label" for="anomalies_minduration"><span swac_lang="data_anomalies_minduration">Min. duration (minutes)</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_minduration" tabindex="0"></span></label>
+                                        <input id="anomalies_minduration" name="minduration" class="uk-input uk-form-small" type="number" min="1" step="1" placeholder="data_anomalies_auto">
+                                        <label class="uk-form-label uk-margin-small-top" for="anomalies_epsilon"><span swac_lang="data_anomalies_epsilon">Tolerance</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_epsilon" tabindex="0"></span></label>
+                                        <input id="anomalies_epsilon" name="epsilon" class="uk-input uk-form-small" type="number" min="0" step="any" placeholder="data_anomalies_auto">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="uk-card uk-card-default uk-card-small uk-card-body">
+                                    <label><input class="uk-checkbox anomalies_check" type="checkbox" value="oscillation" checked> <span class="uk-text-bold" swac_lang="data_anomalies_oscillation">Jumps between extremes</span></label>
+                                    <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_oscillation" tabindex="0"></span>
+                                    <div class="anomalies_params uk-margin-small-top" data-check="oscillation">
+                                        <label class="uk-form-label" for="anomalies_window"><span swac_lang="data_anomalies_window">Window (number of values)</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_window" tabindex="0"></span></label>
+                                        <input id="anomalies_window" name="window" class="uk-input uk-form-small" type="number" min="3" step="1" placeholder="data_anomalies_auto">
+                                        <label class="uk-form-label uk-margin-small-top" for="anomalies_minchanges"><span swac_lang="data_anomalies_minchanges">Min. direction changes</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_minchanges" tabindex="0"></span></label>
+                                        <input id="anomalies_minchanges" name="minchanges" class="uk-input uk-form-small" type="number" min="2" step="1" placeholder="data_anomalies_auto">
+                                        <label class="uk-form-label uk-margin-small-top" for="anomalies_minamplitude"><span swac_lang="data_anomalies_minamplitude">Min. amplitude (% of range)</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_minamplitude" tabindex="0"></span></label>
+                                        <input id="anomalies_minamplitude" name="minamplitude" class="uk-input uk-form-small" type="number" min="1" max="100" step="1" placeholder="data_anomalies_auto">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="uk-margin">
+                        <button type="submit" class="uk-button uk-button-primary" swac_lang="data_anomalies_execute">Analyse</button>
+                        <button type="reset" class="uk-button uk-button-default" swac_lang="data_anomalies_reset">Reset</button>
+                    </div>
+                </form>
+
+                <div class="anomalies_status uk-text-meta" aria-live="polite"></div>
+
+                <!-- Step 3: Results -->
+                <div class="anomalies_result uk-margin">
+                    <h3 swac_lang="data_anomalies_requests">Requests to SmartDataLyser</h3>
+                    <ul class="anomalies_requests uk-list uk-list-divider uk-text-small uk-text-break"></ul>
+                </div>
+            </article>
+        </div>
+        <div id="favs" swa="Favourites"></div>
+    </body>
+</html>

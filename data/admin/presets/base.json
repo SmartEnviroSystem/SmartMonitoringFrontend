@@ -458,6 +458,7 @@
                     "name": "tbl_navigationroute",
                     "fromName": "tbl_navigationroute",
                     "method": "create",
+                    "checkfor": "name",
                     "body": [
                         {
                             "id": 100,
@@ -699,6 +700,14 @@
                             "name": "menu_data_analysis_compare",
                             "rfrom": "*",
                             "rto": "analysis/compare.html",
+                            "parent": 700,
+                            "active": false
+                        },
+                        {
+                            "id": 703,
+                            "name": "menu_data_analysis_anomalies",
+                            "rfrom": "*",
+                            "rto": "analysis/anomalies.html",
                             "parent": 700,
                             "active": false
                         },
@@ -1067,6 +1076,11 @@
                         {
                             "id": 702,
                             "ckey": "func_data_analysis_compare",
+                            "active": false
+                        },
+                        {
+                            "id": 703,
+                            "ckey": "func_data_analysis_anomalies",
                             "active": false
                         },
                         {

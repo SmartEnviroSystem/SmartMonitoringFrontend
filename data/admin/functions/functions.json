@@ -1473,6 +1473,54 @@
             ]
         },
         {
+            "id": 703,
+            "parent": 700,
+            "name": "func_data_analysis_anomalies",
+            "version": "3.0 alpha 1",
+            "state": [
+                {
+                    "type": "rest",
+                    "method": "get",
+                    "url": "records/tbl_systemconfiguration?storage=smartmonitoring&filter=id,eq,703",
+                    "check": "active=true"
+                }
+            ],
+            "activate": [
+                {
+                    "type": "rest",
+                    "method": "put",
+                    "body": "{\"id\": 703, \"active\": true}",
+                    "url": "records/tbl_systemconfiguration?storage=smartmonitoring"
+                },
+                {
+                    "type": "rest",
+                    "method": "put",
+                    "body": "{\"id\": 700, \"active\": true}",
+                    "url": "records/tbl_navigationroute?storage=smartmonitoring"
+                },
+                {
+                    "type": "rest",
+                    "method": "put",
+                    "body": "{\"id\": 703, \"active\": true}",
+                    "url": "records/tbl_navigationroute?storage=smartmonitoring"
+                }
+            ],
+            "deactivate": [
+                {
+                    "type": "rest",
+                    "method": "put",
+                    "body": "{\"id\": 703, \"active\": false}",
+                    "url": "records/tbl_systemconfiguration?storage=smartmonitoring"
+                },
+                {
+                    "type": "rest",
+                    "method": "put",
+                    "body": "{\"id\": 703, \"active\": false}",
+                    "url": "records/tbl_navigationroute?storage=smartmonitoring"
+                }
+            ]
+        },
+        {
             "id": 800,
             "name": "func_datamap",
             "version": "3.0 alpha 1",
