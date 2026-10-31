@@ -13,6 +13,9 @@
         <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
         <script src="/SWAC/swac/swac.js" type="module"></script>
 
+        <script src="/SWAC/swac/components/Charts/libs/chartjs/Chart.min.js"></script>
+        <script src="/SWAC/swac/components/Charts/libs/chartjs/chartjs-adapter-date-fns.bundle.min.js"></script>
+
         <script src="../../js/analysis/anomalies.js" type="module"></script>
 
         <link rel="stylesheet" href="../../customisations/global.css" />
@@ -133,9 +136,35 @@
                 <div class="anomalies_status uk-text-meta" aria-live="polite"></div>
 
                 <!-- Step 3: Results -->
-                <div class="anomalies_result uk-margin">
-                    <h3 swac_lang="data_anomalies_requests">Requests to SmartDataLyser</h3>
-                    <ul class="anomalies_requests uk-list uk-list-divider uk-text-small uk-text-break"></ul>
+                <div class="anomalies_result uk-margin" hidden>
+                    <h3 swac_lang="data_anomalies_result">Result</h3>
+                    <ul class="anomalies_summary uk-list uk-text-small"></ul>
+                    <div class="anomalies_chart uk-margin" style="position: relative; height: 360px;"><canvas></canvas></div>
+                    <div class="uk-overflow-auto">
+                        <table class="uk-table uk-table-small uk-table-divider uk-table-hover">
+                            <thead>
+                                <tr>
+                                    <th swac_lang="data_anomalies_col_check">Check</th>
+                                    <th swac_lang="data_anomalies_col_from">From</th>
+                                    <th swac_lang="data_anomalies_col_until">Till</th>
+                                    <th swac_lang="data_anomalies_col_count">Values</th>
+                                    <th swac_lang="data_anomalies_col_min">Min</th>
+                                    <th swac_lang="data_anomalies_col_max">Max</th>
+                                    <th swac_lang="data_anomalies_col_indicator">Key figure</th>
+                                </tr>
+                            </thead>
+                            <tbody class="anomalies_table"></tbody>
+                        </table>
+                    </div>
+                    <ul uk-accordion>
+                        <li>
+                            <a class="uk-accordion-title uk-text-small" href="#" swac_lang="data_anomalies_details">Technical details</a>
+                            <div class="uk-accordion-content">
+                                <p class="uk-text-meta" swac_lang="data_anomalies_requests">Requests to SmartDataLyser</p>
+                                <ul class="anomalies_requests uk-list uk-list-divider uk-text-small uk-text-break"></ul>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </article>
         </div>
