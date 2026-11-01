@@ -4,8 +4,8 @@
 var swac_login_options = {
     mode: 'form',
     loginURL: '/SmartUser/smartuser/user/performLogin',
-    afterLoginLoc: 'sites/object/dashboard.html',
-    afterLogoutLoc: './index.html',
+    afterLoginLoc: '/sites/object/dashboard.html',
+    afterLogoutLoc: '/index.html',
     loggedinRedirects: new Map(),
     activeOn: {
         fromName: 'tbl_systemconfiguration', // Name of the datatable
@@ -14,8 +14,8 @@ var swac_login_options = {
         }
     }
 };
-swac_login_options.loggedinRedirects.set('', 'sites/object/dashboard.html');
-swac_login_options.loggedinRedirects.set('index.html', 'sites/object/dashboard.html');
+swac_login_options.loggedinRedirects.set('', '/sites/object/dashboard.html');
+swac_login_options.loggedinRedirects.set('index.html', '/sites/object/dashboard.html');
 
 var screenboard_options = {
     for : ['[name="swac_user_username"]', '[name="swac_user_password"]'],
@@ -32,7 +32,7 @@ var screenboard_options = {
  */
 document.addEventListener('swac_login_device_select',function(e) {
     if(e.detail.value && e.detail.value!=='') {
-        window.location = 'sites/device/index.html?oo_id=' +e.detail.value;
+        window.location = '/sites/device/index.html?oo_id=' +e.detail.value;
     }
 });
 
@@ -63,12 +63,12 @@ document.addEventListener('swac_ready', function () {
     let devBtn = document.querySelector('.login_device');
     devBtn.addEventListener('click',function() {
         let devElem = document.querySelector('[name="login_device"]');
-        window.location = 'sites/device/index.html?oo_id=' +devElem.value;
+        window.location = '/sites/device/index.html?oo_id=' +devElem.value;
     });
     // Register function to react on user clicking "no device" button
     let noDevBtn = document.querySelector('.login_nodevice');
     noDevBtn.addEventListener('click',function() {
-        window.location = 'sites/object/dashboard.html';
+        window.location = '/sites/object/dashboard.html';
     });
 });
 

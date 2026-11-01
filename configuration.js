@@ -74,8 +74,8 @@ var SWAC_config = {
  */
 var userform_options = {
     loginURL: '/SmartUser/smartuser/user/performLogin',
-    afterLogoutLoc: '../../index.html',
-    accountURL: '../../sites/user/account.html',
+    afterLogoutLoc: '/index.html',
+    accountURL: '/sites/user/account.html',
     activeOn: {
         fromName: 'tbl_systemconfiguration', // Name of the datatable
         fromWheres: {
