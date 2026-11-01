@@ -780,6 +780,13 @@
                             "active": false
                         },
                         {
+                            "id":2000,
+                            "name": "menu_jobs",
+                            "rfrom": "*",
+                            "rto": "jobs/index.html",
+                            "active": true
+                        },
+                        {
                             "id": 9000,
                             "name": "menu_admin",
                             "rfrom": "*",
