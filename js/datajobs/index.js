@@ -11,6 +11,25 @@ window['all_jobs_options'].plugins.set('TableSort', {
     active: true
 });
 
+// Load dependencies separately; Present still receives the original job records.
+window['all_jobs_options'].plugins.set('TableHierarchy', {
+    id: 'TableHierarchy',
+    active: true,
+    linear: true,
+    loadRelations: loadJobRelations
+});
+
+async function loadJobRelations(view) {
+    const source = await window.swac.Model.load({
+        fromName: 'datajobs_chain',
+        fromWheres: {filter: 'active,eq,true'},
+        fromHeaders: view.options.fromHeaders
+    });
+    return source.getSets()
+        .filter(link => link && (link.active === true || link.active === 'true' || link.active === 1))
+        .map(link => ({parentId: link.pre_job_id, childId: link.post_job_id}));
+}
+
 window['all_jobs_options'].plugins.set('TableActions', {
             id: 'TableActions',
             active: true,
