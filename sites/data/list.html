@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title swac_lang="data_list_title">Data > List</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" sizes="32x32" href="../../files/icons/32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../../files/icons/16x16.png">
+        <link rel="stylesheet" href="../../css/global.css" />
+        <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css" />
+        <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
+        <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
+        <script src="/SWAC/swac/swac.js" type="module"></script>
+        <script src="../../js/ai-config.js?ver=10.08.2026.1"></script>
+        <script src="../../js/data/list.js?ver=17.08.2026.3"></script>
+        <script src="../../js/general/oo_change.js?ver=11.08.2026.1"></script>
+        <link rel="stylesheet" href="../../customisations/global.css" />
+    </head>
+    <body>
+        <nav id="main_navigation" class="swac_navigation_head" swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC"></nav>
+        <div id="userform" swa="User"></div>
+        <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
+        <div id="oo_change" swa="Select FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC"></div>
+
+        <article class="uk-article">
+            <h2 class="uk-article-title" swac_lang="data_list_title">Data > List</h2>
+            <p class="uk-article-meta" swac_lang="data_list_desc"></p>
+
+            <!-- Chart. The Datafilterbar and DataManager plugins add their bars above the chart -->
+            <div id="datachart" swa="Charts FROM {{data_collection}} WHERE geotransform=latlon AND filter=oo_id,neoeq,{{oo_id}} OPTIONS datachart_options"></div>
+            <p id="data_list_particle_source_desc" class="uk-article-meta" swac_lang="data_list_particle_source_desc"></p>
+
+            <!-- Data table. The Datafilterbar plugin adds its bar above the table -->
+            <div id="datalist" swa="Present FROM {{data_collection}} WHERE geotransform=latlon AND filter=oo_id,neoeq,{{oo_id}} OPTIONS datalist_options">
+                <table id="datatable" class="uk-table uk-table-divider uk-table-striped">
+                    <tr>
+                        <th class="swac_repeatForAttribute">{attrName}</th>
+                    </tr>
+                    <tr class="swac_repeatForSet">
+                        <td class="swac_repeatForValue">
+                            <span uk-tooltip="title: {attrName}">{*}</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="uk-margin">
+                <p swac_lang="data_list_access_desc"></p>
+                <a href="api.html?data_collection={{data_collection}}&oo_id={{oo_id}}" swac_lang="data_list_access_link"></a>
+            </div>
+        </article>
+
+        <div id="favs" swa="Favourites"></div>
+    </body>
+</html>

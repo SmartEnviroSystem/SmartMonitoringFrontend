@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+        <title swac_lang="datajobs_title">DataJobs</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" sizes="32x32" href="../../files/icons/32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../../files/icons/16x16.png">
+        <link rel="stylesheet" href="../../css/global.css" />
+
+        <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css" />
+        <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
+        <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
+        <script src="/SWAC/swac/swac.js" type="module"></script>
+</head>
+
+<body class="uk-background-muted">
+
+<div class="uk-container uk-margin-top">
+
+    <h1 class="uk-heading-line"><span>SmartDataJobs (Mockup)</span></h1>
+
+    <!-- JOB LISTE -->
+    <div class="uk-card uk-card-default uk-card-body uk-margin">
+        <h3 class="uk-card-title">Vorhandene Jobs</h3>
+
+        <div swa="Present FROM /api/jobs">
+            <table class="uk-table uk-table-divider uk-table-striped uk-table-small">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Beschreibung</th>
+                        <th>Aktion</th>
+                        <th>Aktiv</th>
+                        <th>Start</th>
+                        <th>Stop</th>
+                        <th>Intervall</th>
+                        <th>Priorität</th>
+                        <th>Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- SWAC füllt hier die Job-Daten ein -->
+                    <tr>
+                        <td>{{name}}</td>
+                        <td>{{desc}}</td>
+                        <td>{{action}}</td>
+                        <td>{{active}}</td>
+                        <td>{{start}}</td>
+                        <td>{{stop}}</td>
+                        <td>{{repeatsecs}}</td>
+                        <td>{{priority}}</td>
+                        <td>
+                            <button class="uk-button uk-button-default uk-button-small">Bearbeiten</button>
+                            <button class="uk-button uk-button-danger uk-button-small">Löschen</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button class="uk-button uk-button-primary uk-margin-top">
+            <span uk-icon="plus"></span> Neuen Job anlegen
+        </button>
+    </div>
+
+    <!-- EINZELFORMULAR FÜR NEU / BEARBEITEN -->
+    <div class="uk-card uk-card-default uk-card-body uk-margin">
+        <h3 class="uk-card-title">Job bearbeiten / neu anlegen</h3>
+
+        <form class="uk-form-stacked">
+
+            <div class="uk-grid-small" uk-grid>
+
+                <div class="uk-width-1-2">
+                    <label class="uk-form-label">Name</label>
+                    <input class="uk-input" type="text" placeholder="Jobname">
+                </div>
+
+                <div class="uk-width-1-2">
+                    <label class="uk-form-label">Aktion</label>
+                    <select class="uk-select">
+                        <option value="">Bitte wählen…</option>
+                        <option>sendMail</option>
+                        <option>exportData</option>
+                        <option>cleanup</option>
+                    </select>
+                </div>
+
+                <div class="uk-width-1-1">
+                    <label class="uk-form-label">Beschreibung</label>
+                    <textarea class="uk-textarea" rows="2"></textarea>
+                </div>
+
+                <div class="uk-width-1-4">
+                    <label class="uk-form-label">Aktiv</label><br>
+                    <input class="uk-checkbox" type="checkbox">
+                </div>
+
+                <div class="uk-width-1-4">
+                    <label class="uk-form-label">Start</label>
+                    <input class="uk-input" type="datetime-local">
+                </div>
+
+                <div class="uk-width-1-4">
+                    <label class="uk-form-label">Stop</label>
+                    <input class="uk-input" type="datetime-local">
+                </div>
+
+                <div class="uk-width-1-4">
+                    <label class="uk-form-label">Intervall (Sek.)</label>
+                    <input class="uk-input" type="number" min="0">
+                </div>
+
+                <div class="uk-width-1-4">
+                    <label class="uk-form-label">Priorität</label>
+                    <input class="uk-input" type="number" min="0" max="10">
+                </div>
+
+            </div>
+
+            <hr class="uk-margin">
+
+            <!-- PARAMETER MOCKUP -->
+            <h4>Parameter zur Aktion</h4>
+
+            <div class="uk-grid-small uk-child-width-1-2" uk-grid>
+
+                <div>
+                    <label class="uk-form-label">Parametername</label>
+                    <input class="uk-input" type="text" placeholder="z.B. recipient">
+                </div>
+
+                <div>
+                    <label class="uk-form-label">Datentyp</label>
+                    <select class="uk-select">
+                        <option>string</option>
+                        <option>number</option>
+                        <option>enum</option>
+                        <option>boolean</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="uk-form-label">Wertebereich / Allowed Values</label>
+                    <input class="uk-input" type="text" placeholder="z.B. csv,json,xml oder 1-5">
+                </div>
+
+            </div>
+
+            <div class="uk-margin-top uk-flex uk-flex-between">
+                <button type="button" class="uk-button uk-button-default">Abbrechen</button>
+                <button type="submit" class="uk-button uk-button-primary">Speichern</button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

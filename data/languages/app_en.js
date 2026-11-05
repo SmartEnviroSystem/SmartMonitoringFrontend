@@ -37,6 +37,8 @@ ar_app_en = {
     menu_datastat_missing: 'Periods without Data',
     menu_datastat_groups: 'Data Groups',
 
+    menu_jobs: 'Jobs',
+
     menu_labeling: 'Labeling',
     menu_label: 'Label',
 
@@ -659,6 +661,8 @@ ar_app_en = {
     media_upload_mediapreview_header: 'Preview',
     media_upload_noselect: 'Please select an object to upload a media file.',
     media_upload_notavail: 'The function is not available for the selected object. Please contact the administrator.',
+
+    job_list_headline: 'Job List',
 
     device_index_title: '',
     device_welcome: 'Your device:',
