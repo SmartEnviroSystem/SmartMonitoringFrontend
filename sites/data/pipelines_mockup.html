@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartMonitoring – Datenpipelines</title>
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="../../files/icons/32x32.png">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css">
+  <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
+  <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
+  <script src="/SWAC/swac/swac.js" type="module"></script>
+  <style>
+    :root { --pm-ink:#172b4d; --pm-muted:#65758a; --pm-line:#e2e8f0; --pm-blue:#1769aa; --pm-bg:#f3f6fa; }
+    .pm-app, .pm-app * { box-sizing:border-box; }
+    .pm-app { max-width:1500px; margin:0 auto; padding:28px 24px 70px; color:var(--pm-ink); font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .pm-app button, .pm-app input, .pm-app select, .pm-app textarea { font:inherit; }
+    .pm-kicker { color:var(--pm-blue); font-weight:750; font-size:12px; letter-spacing:.12em; text-transform:uppercase; }
+    .pm-title { margin:5px 0 7px; font-weight:800; font-size:clamp(25px,3vw,34px); letter-spacing:-.04em; line-height:1.25; }
+    .pm-desc { color:var(--pm-muted); font-size:14px; margin:0; }
+    .pm-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:22px; }
+    .pm-grid { display:grid; grid-template-columns:minmax(215px,.85fr) minmax(400px,2fr) minmax(260px,1.05fr); gap:15px; align-items:stretch; }
+    .pm-card { border:1px solid var(--pm-line); background:#fff; border-radius:15px; box-shadow:0 4px 18px rgba(22,47,78,.045); overflow:hidden; }
+    .pm-card-head { padding:18px 18px 14px; border-bottom:1px solid var(--pm-line); }
+    .pm-card-head h2 { font-size:16px; margin:0 0 4px; line-height:1.35; color:var(--pm-ink); font-weight:750; }
+    .pm-card-head p { font-size:12px; color:var(--pm-muted); margin:0; }
+    .pm-card-body { padding:17px; }
+    .pm-smhead { text-transform:uppercase; letter-spacing:.09em; font-size:11px; font-weight:750; color:#788598; margin:18px 0 10px; }
+    .pm-sidebar-btn { display:block; width:100%; background:#f3f7fd; border:1px solid #cce0f7; border-radius:10px; padding:12px; text-align:left; cursor:pointer; color:var(--pm-ink); }
+    .pm-sidebar-btn:hover, .pm-sidebar-btn:focus-visible { outline:none; border-color:#78afe1; background:#eaf4ff; }
+    .pm-sidebar-btn strong { display:block; font-size:13px; }
+    .pm-sidebar-btn span { display:block; color:var(--pm-muted); font-size:11px; margin-top:5px; }
+    .pm-btn { display:inline-flex; justify-content:center; align-items:center; gap:7px; width:100%; background:#fff; color:#28547f; border:1px solid #cddbe8; border-radius:9px; padding:10px; font-size:13px; font-weight:700; cursor:pointer; }
+    .pm-btn:hover, .pm-btn:focus-visible { background:#edf5fc; border-color:#8bb9e1; }
+    .pm-btn:focus-visible, .pm-node:focus-visible { outline:3px solid #74b5f0; outline-offset:3px; }
+    .pm-btn-primary { background:var(--pm-blue); color:white; border-color:var(--pm-blue); }
+    .pm-btn-primary:hover, .pm-btn-primary:focus-visible { background:#0c5389; color:#fff; }
+    .pm-palette { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .pm-chip { border:1px solid var(--pm-line); padding:9px 10px; border-radius:9px; font-size:12px; font-weight:750; color:#365168; background:#f9fafc; text-align:center; }
+    .pm-chip-source { border-left:4px solid #0eaa82; }
+    .pm-chip-filter { border-left:4px solid #2681da; }
+    .pm-chip-script { border-left:4px solid #e7a434; }
+    .pm-chip-target { border-left:4px solid #d96084; }
+    .pm-flow-wrap { min-height:315px; background:linear-gradient(#edf2f7 1px,transparent 1px),linear-gradient(90deg,#edf2f7 1px,transparent 1px),#fbfcfe; background-size:22px 22px; padding:24px 17px; overflow-x:auto; }
+    .pm-flow { display:flex; align-items:center; gap:11px; min-width:610px; justify-content:center; }
+    .pm-node { flex:0 0 123px; min-height:132px; border:1px solid #d9e2eb; border-top:4px solid #8e9cab; background:#fff; padding:12px 9px; border-radius:11px; box-shadow:0 4px 10px rgba(30,59,89,.07); text-align:left; color:var(--pm-ink); cursor:pointer; transition:border-color .13s ease,transform .13s ease; }
+    .pm-node:hover { transform:translateY(-2px); }
+    .pm-node[aria-pressed="true"] { border-color:#207bb9; border-top-color:#207bb9; box-shadow:0 0 0 3px #d7eafd,0 7px 16px rgba(23,105,170,.12); }
+    .pm-node[data-step="source"] { border-top-color:#0eaa82; }
+    .pm-node[data-step="filter"] { border-top-color:#2681da; }
+    .pm-node[data-step="script"] { border-top-color:#e7a434; }
+    .pm-node[data-step="target"] { border-top-color:#d96084; }
+    .pm-node-num { font-size:10px; color:#8a97a7; font-weight:700; letter-spacing:.06em; }
+    .pm-node-name { font-weight:800; font-size:14px; margin:8px 0; }
+    .pm-node-value { font-size:11px; color:#677588; overflow-wrap:anywhere; line-height:1.4; }
+    .pm-arrow { flex:0 0 12px; color:#8aa0b2; font-size:21px; font-weight:bold; }
+    .pm-flow-help { margin-top:27px; text-align:center; font-size:12px; color:#60768d; }
+    .pm-flow-footer { border-top:1px solid var(--pm-line); padding:16px 19px; background:#fff; }
+    .pm-flow-footer h3 { font-size:13px; margin:0 0 8px; font-weight:750; }
+    .pm-flow-footer p { margin:0; color:var(--pm-muted); font-size:12px; line-height:1.5; }
+    .pm-field { margin-bottom:17px; }
+    .pm-field label { display:block; color:#36516d; font-weight:700; font-size:12px; margin-bottom:7px; }
+    .pm-field input, .pm-field select, .pm-field textarea { width:100%; border:1px solid #d3dce5; padding:10px; border-radius:9px; background:#fff; color:#172b4d; font-size:13px; min-width:0; }
+    .pm-field textarea { min-height:76px; resize:vertical; }
+    .pm-field-help { display:block; margin-top:5px; font-size:11px; color:#778698; line-height:1.45; }
+    .pm-badge { color:#35638c; background:#e9f3fc; border-radius:30px; padding:5px 9px; font-size:11px; font-weight:700; display:inline-block; margin-bottom:15px; }
+    .pm-feedback { border-radius:9px; padding:11px 12px; margin-top:13px; color:#16603b; background:#e9f8ef; border:1px solid #b8e7ce; font-size:12px; line-height:1.5; }
+    .pm-feedback[hidden] { display:none; }
+    .pm-footer { margin-top:32px; color:#76859a; font-size:12px; }
+    @media (max-width:1120px) { .pm-grid { grid-template-columns:220px 1fr; } .pm-settings { grid-column:1 / -1; } .pm-flow { justify-content:flex-start; } }
+    @media (max-width:680px) { .pm-app { padding:20px 12px 45px; } .pm-head { display:block; } .pm-demo { margin-top:12px; } .pm-grid { grid-template-columns:1fr; } .pm-settings { grid-column:auto; } .pm-flow-wrap { min-height:225px; } }
+    .pm-script-modes { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:0 0 17px; padding:4px; background:#eff4f9; border-radius:10px; }
+    .pm-mode-btn { background:transparent; border:1px solid transparent; border-radius:8px; padding:10px 6px; font-size:12px; font-weight:700; color:#526a82; cursor:pointer; }
+    .pm-mode-btn[aria-pressed="true"] { background:#fff; color:#125e99; border-color:#c8deef; box-shadow:0 1px 4px rgba(24,66,108,.08); }
+    .pm-mode-btn:focus-visible { outline:3px solid #74b5f0; outline-offset:2px; }
+    .pm-code-editor { min-height:230px !important; font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace !important; font-size:12px !important; line-height:1.6; tab-size:4; }
+    .pm-script-subheading { font-size:12px; font-weight:750; margin:0 0 13px; color:#284d70; }
+    .pm-custom-code-preview { white-space:pre-wrap; overflow-wrap:anywhere; background:#f5f7fa; border:1px solid #e2e8f0; padding:11px; border-radius:8px; font:11px/1.6 ui-monospace,Consolas,monospace; max-height:170px; overflow-y:auto; }
+    .pm-script-panel[hidden] { display:none; }
+  </style>
+</head>
+<body>
+  <header id="head_navigation" swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC"></header>
+  <div id="userform" swa="User"></div>
+  <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
+  <main class="pm-app">
+    <div class="pm-head">
+      <div>
+        <h1 class="pm-title">Datenpipelines</h1>
+        <p class="pm-desc">Verarbeitungspipelines erstellen und konfigurieren</p>
+      </div>
+      
+    </div>
+
+    <div class="pm-grid">
+      
+      <section class="pm-card" aria-label="Pipeline-Verwaltung">
+        <div class="pm-card-head"><h2>Pipeline-Verwaltung</h2><p>Vorhandene Pipeline öffnen oder neu anlegen</p></div>
+        <div class="pm-card-body">
+          <button type="button" class="pm-sidebar-btn" id="loadExample">
+            <strong>Messdaten aufbereiten</strong><span>Pipeline · 4 Bausteine</span>
+          </button>
+          <div style="height:10px"></div>
+          <button type="button" class="pm-btn" id="newPipeline">＋ Neue Pipeline anlegen</button>
+          <div style="height:10px"></div>
+          <button type="button" class="pm-btn" id="savePipeline">Pipeline speichern</button>
+          <div class="pm-smhead">Verfügbare Bausteine</div>
+          <div class="pm-palette" aria-label="Bausteintypen">
+            <span class="pm-chip pm-chip-source">Quelle</span>
+            <span class="pm-chip pm-chip-filter">Filter</span>
+            <span class="pm-chip pm-chip-script">Skript</span>
+            <span class="pm-chip pm-chip-target">Ziel</span>
+          </div>
+          <p class="pm-desc" style="margin-top:12px;font-size:12px">Die Bausteine sind im Flow bereits dargestellt. Klicke einen an, um seine Einstellungen zu sehen. Bei „Skript“ kannst du eine Vorlage auswählen oder eigenen Python-Code erstellen.</p>
+        </div>
+      </section>
+
+      
+      <section class="pm-card" aria-label="Pipeline-Editor">
+        <div class="pm-card-head"><h2>Pipeline-Editor</h2><p id="pipelineLabel">Messdaten aufbereiten</p></div>
+        <div class="pm-flow-wrap">
+          <div class="pm-flow" role="group" aria-label="Verarbeitungsschritte">
+            <button type="button" class="pm-node" data-step="source" aria-pressed="false">
+              <div class="pm-node-num">SCHRITT 01</div><div class="pm-node-name">Quelle</div>
+              <div class="pm-node-value" id="sourcePreview">exampledata_timeseries_1week</div>
+            </button>
+            <span class="pm-arrow" aria-hidden="true">→</span>
+            <button type="button" class="pm-node" data-step="filter" aria-pressed="false">
+              <div class="pm-node-num">SCHRITT 02</div><div class="pm-node-name">Filter</div>
+              <div class="pm-node-value" id="filterPreview">Zeitraum: 7 Tage</div>
+            </button>
+            <span class="pm-arrow" aria-hidden="true">→</span>
+            <button type="button" class="pm-node" data-step="script" aria-pressed="true">
+              <div class="pm-node-num">SCHRITT 03</div><div class="pm-node-name">Skript</div>
+              <div class="pm-node-value" id="scriptPreview">normalize_values.py</div>
+            </button>
+            <span class="pm-arrow" aria-hidden="true">→</span>
+            <button type="button" class="pm-node" data-step="target" aria-pressed="false">
+              <div class="pm-node-num">SCHRITT 04</div><div class="pm-node-name">Ziel</div>
+              <div class="pm-node-value" id="targetPreview">ergebnis_tabelle</div>
+            </button>
+          </div>
+          <div class="pm-flow-help">↑ Baustein anklicken, um rechts seine Einstellungen zu öffnen</div>
+        </div>
+        <div class="pm-flow-footer">
+          <h3>Anwendungsfall</h3>
+          <p>Messdaten aus einer vorhandenen Tabelle lesen, zeitlich einschränken, mit einem Skript bearbeiten und das Ergebnis in einer Zieltabelle ablegen. </p>
+        </div>
+      </section>
+
+      
+      <section class="pm-card pm-settings" aria-label="Bausteinkonfiguration">
+        <div class="pm-card-head"><h2>Bausteinkonfiguration</h2><p>Felder ändern sich je nach ausgewähltem Baustein</p></div>
+        <div class="pm-card-body">
+          <span class="pm-badge" id="currentStep">Ausgewählter Baustein: Skript</span>
+          <form id="detailsForm"></form>
+          <div class="pm-feedback" id="feedback" role="status" hidden></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+
+  (function () {
+    'use strict';
+
+    const predefinedScripts = [
+      {name:'normalize_values.py', description:'Werte aufbereiten', parameter:'threshold=0.95'},
+      {name:'replace_null.py', description:'Fehlende Werte ersetzen', parameter:'ersatzwert=0'}
+    ];
+
+    const ownScripts = [];
+    const example = () => ({
+      source:'exampledata_timeseries_1week', period:'7 Tage', script:'normalize_values.py',
+      scriptType:'predefined', description:'Werte aufbereiten',
+      parameter:'threshold=0.95', target:'ergebnis_tabelle'
+    });
+    let pipeline = example();
+    let currentStep = 'script';
+    let newDraft = false;
+    let scriptMode = 'existing';
+    const $ = id => document.getElementById(id);
+    const labels = {source:'Quelle',filter:'Filter',script:'Skript',target:'Ziel'};
+
+    function showMessage(message) {
+      $('feedback').textContent = message;
+      $('feedback').hidden = false;
+    }
+    function clearMessage() { $('feedback').hidden = true; }
+    function findScript(name) {
+      return [...predefinedScripts, ...ownScripts].find(s => s.name === name);
+    }
+    function renderFlow() {
+      $('sourcePreview').textContent = pipeline.source || 'Bitte auswählen';
+      $('filterPreview').textContent = 'Zeitraum: ' + pipeline.period;
+      $('scriptPreview').textContent = pipeline.script
+        ? pipeline.script
+        : 'Bitte auswählen';
+      $('targetPreview').textContent = pipeline.target || 'Bitte eingeben';
+      document.querySelectorAll('.pm-node').forEach(node => {
+        node.setAttribute('aria-pressed', String(node.dataset.step === currentStep));
+      });
+      $('pipelineLabel').textContent = newDraft ? 'Neue Pipeline · Entwurf' : 'Messdaten aufbereiten';
+      $('currentStep').textContent = 'Ausgewählter Baustein: ' + labels[currentStep];
+    }
+
+    const forms = {
+      source: `
+        <div class="pm-field"><label for="fieldSource">Datenquelle / Tabelle auswählen</label>
+          <select id="fieldSource" name="source">
+            <option value="">Bitte auswählen</option>
+            <option value="exampledata_timeseries_1week">exampledata_timeseries_1week</option>
+            <option value="exampledata_timeseries">exampledata_timeseries</option>
+          </select>
+          <span class="pm-field-help">Datenquelle für diesen Verarbeitungsschritt auswählen.</span>
+        </div>`,
+      filter: `
+        <div class="pm-field"><label for="fieldPeriod">Zeitraum auswählen</label>
+          <select id="fieldPeriod" name="period">
+            <option>24 Stunden</option><option>7 Tage</option><option>30 Tage</option><option>Alle Daten</option>
+          </select>
+          <span class="pm-field-help">Zeitbereich für die ausgewählten Messdaten festlegen.</span>
+        </div>`,
+      script: `
+        <div class="pm-script-modes" role="group" aria-label="Art des Skripts auswählen">
+          <button type="button" class="pm-mode-btn" data-script-mode="existing" aria-pressed="true">Vorhandenes Skript</button>
+          <button type="button" class="pm-mode-btn" data-script-mode="new" aria-pressed="false">Eigenes Skript erstellen</button>
+        </div>
+        <div id="existingScriptPanel" class="pm-script-panel">
+          <div class="pm-script-subheading">Skript aus der Liste auswählen</div>
+          <div class="pm-field"><label for="fieldScript">Skript auswählen</label>
+            <select id="fieldScript" name="script"></select>
+            <span class="pm-field-help">Vorhandenes oder selbst erstelltes Skript auswählen.</span>
+          </div>
+          <div class="pm-field"><label for="fieldDescription">Beschreibung</label>
+            <textarea id="fieldDescription" name="description" rows="3"></textarea>
+          </div>
+          <div class="pm-field"><label for="fieldParameter">Parameter</label>
+            <input id="fieldParameter" name="parameter" type="text" placeholder="z. B. threshold=0.95">
+            <span class="pm-field-help">Parameter für das ausgewählte Skript festlegen.</span>
+          </div>
+          <div class="pm-field" id="ownCodePreviewWrapper" hidden>
+            <label>Quellcode des eigenen Skripts</label>
+            <pre class="pm-custom-code-preview" id="ownCodePreview"></pre>
+          </div>
+        </div>
+        <div id="newScriptPanel" class="pm-script-panel" hidden>
+          <div class="pm-script-subheading">Neuen Python-Baustein erstellen</div>
+          <div class="pm-field"><label for="newScriptName">Skriptname</label>
+            <input id="newScriptName" name="newScriptName" type="text" autocomplete="off" placeholder="z. B. meine_auswertung.py">
+          </div>
+          <div class="pm-field"><label for="newScriptDescription">Beschreibung</label>
+            <textarea id="newScriptDescription" name="newScriptDescription" rows="2" placeholder="Was macht das Skript?"></textarea>
+          </div>
+          <div class="pm-field"><label for="newScriptParameter">Parameter (optional)</label>
+            <input id="newScriptParameter" name="newScriptParameter" type="text" placeholder="z. B. faktor=2">
+          </div>
+          <div class="pm-field"><label for="newScriptCode">Python-Code</label>
+            <textarea class="pm-code-editor" id="newScriptCode" name="newScriptCode" spellcheck="false" placeholder="def process(values):\n    return [x * 2 for x in values]"></textarea>
+            <span class="pm-field-help">Python-Code eingeben oder aus einer .py-Datei übernehmen.</span>
+          </div>
+          <div class="pm-field"><label for="newScriptFile">Vorhandene .py-Datei importieren (optional)</label>
+            <input id="newScriptFile" name="newScriptFile" type="file" accept=".py,text/x-python">
+            <span class="pm-field-help">Dateigröße maximal 100 KB.</span>
+          </div>
+        </div>`,
+      target: `
+        <div class="pm-field"><label for="fieldTarget">Zieltabelle</label>
+          <input id="fieldTarget" name="target" type="text" placeholder="z. B. ergebnis_tabelle">
+          <span class="pm-field-help">Tabelle für die Ausgabe der Verarbeitung festlegen.</span>
+        </div>`
+    };
+
+    function populateScriptList() {
+      const select = $('fieldScript');
+      select.replaceChildren();
+      const placeholder = new Option('Bitte auswählen', '');
+      select.add(placeholder);
+      const createGroup = (title, scripts) => {
+        const group = document.createElement('optgroup');
+        group.label = title;
+        scripts.forEach(script => group.appendChild(new Option(
+          script.name,
+          script.name
+        )));
+        select.add(group);
+      };
+      createGroup('Vorhandene Skripte', predefinedScripts);
+      if (ownScripts.length) createGroup('Eigene Skripte', ownScripts);
+      select.value = pipeline.script;
+    }
+    function showSelectedScriptMetadata() {
+      const selected = findScript($('fieldScript').value);
+      $('fieldDescription').value = selected ? selected.description : '';
+      $('fieldParameter').value = selected ? selected.parameter : '';
+      const own = ownScripts.find(s => s.name === $('fieldScript').value);
+      $('ownCodePreviewWrapper').hidden = !own;
+      $('ownCodePreview').textContent = own ? own.code : '';
+    }
+    function setScriptMode(nextMode) {
+      scriptMode = nextMode;
+      const isNew = nextMode === 'new';
+      $('existingScriptPanel').hidden = isNew;
+      $('newScriptPanel').hidden = !isNew;
+      document.querySelectorAll('.pm-mode-btn').forEach(btn => {
+        btn.setAttribute('aria-pressed', String(btn.dataset.scriptMode === nextMode));
+      });
+      $('submitSettings').textContent = isNew ? 'Eigenes Skript übernehmen' : 'Änderungen übernehmen';
+      clearMessage();
+    }
+    function setupScriptPanel() {
+      populateScriptList();
+      if (pipeline.script) {
+        $('fieldDescription').value = pipeline.description;
+        $('fieldParameter').value = pipeline.parameter;
+        const own = ownScripts.find(s => s.name === pipeline.script);
+        $('ownCodePreviewWrapper').hidden = !own;
+        $('ownCodePreview').textContent = own ? own.code : '';
+      }
+      $('fieldScript').addEventListener('change', showSelectedScriptMetadata);
+      document.querySelectorAll('.pm-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => setScriptMode(btn.dataset.scriptMode));
+      });
+      $('newScriptFile').addEventListener('change', async event => {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        if (!file.name.toLowerCase().endsWith('.py') || file.size > 100 * 1024) {
+          showMessage('Bitte eine .py-Datei bis maximal 100 KB wählen.');
+          event.target.value = '';
+          return;
+        }
+        try {
+          const code = await file.text();
+          $('newScriptCode').value = code;
+          $('newScriptName').value = file.name;
+          showMessage('Python-Datei in den Editor geladen.');
+        } catch (error) {
+          showMessage('Datei konnte nicht gelesen werden.');
+        }
+      });
+      setScriptMode(scriptMode);
+    }
+    function renderDetails() {
+      $('detailsForm').innerHTML = forms[currentStep] +
+        '<button id="submitSettings" type="submit" class="pm-btn pm-btn-primary">Änderungen übernehmen</button>';
+      if (currentStep === 'source') $('fieldSource').value = pipeline.source;
+      if (currentStep === 'filter') $('fieldPeriod').value = pipeline.period;
+      if (currentStep === 'script') setupScriptPanel();
+      if (currentStep === 'target') $('fieldTarget').value = pipeline.target;
+    }
+    function selectStep(step) {
+      currentStep = step;
+      clearMessage();
+      renderFlow();
+      renderDetails();
+    }
+
+    document.querySelectorAll('.pm-node').forEach(node => {
+      node.addEventListener('click', () => selectStep(node.dataset.step));
+    });
+    $('detailsForm').addEventListener('submit', event => {
+      event.preventDefault();
+      if (currentStep === 'source') pipeline.source = $('fieldSource').value;
+      if (currentStep === 'filter') pipeline.period = $('fieldPeriod').value;
+      if (currentStep === 'script') {
+        if (scriptMode === 'new') {
+          const name = $('newScriptName').value.trim();
+          const code = $('newScriptCode').value;
+          if (!/^[A-Za-z0-9_.-]+\.py$/i.test(name)) {
+            showMessage('Bitte einen gültigen Dateinamen wie mein_skript.py eingeben.');
+            return;
+          }
+          if (!code.trim()) {
+            showMessage('Bitte Python-Code eingeben oder eine .py-Datei importieren.');
+            return;
+          }
+          if (code.length > 100 * 1024) {
+            showMessage('Der Python-Code darf maximal 100 KB groß sein.');
+            return;
+          }
+          if (predefinedScripts.some(s => s.name === name)) {
+            showMessage('Dieser Skriptname ist bereits vergeben. Bitte einen anderen Namen wählen.');
+            return;
+          }
+          const custom = {
+            name, code,
+            description:$('newScriptDescription').value.trim(),
+            parameter:$('newScriptParameter').value.trim()
+          };
+          const existingIndex = ownScripts.findIndex(s => s.name === name);
+          if (existingIndex >= 0) ownScripts[existingIndex] = custom;
+          else ownScripts.push(custom);
+          pipeline.script = name;
+          pipeline.scriptType = 'custom';
+          pipeline.description = custom.description;
+          pipeline.parameter = custom.parameter;
+          scriptMode = 'existing';
+          renderFlow();
+          renderDetails();
+          showMessage('Eigenes Skript „' + name + '“ wurde zur Skriptliste hinzugefügt.');
+          return;
+        }
+        pipeline.script = $('fieldScript').value;
+        pipeline.scriptType = ownScripts.some(s => s.name === pipeline.script) ? 'custom' : 'predefined';
+        pipeline.description = $('fieldDescription').value;
+        pipeline.parameter = $('fieldParameter').value;
+      }
+      if (currentStep === 'target') pipeline.target = $('fieldTarget').value.trim();
+      renderFlow();
+      showMessage('Einstellungen übernommen.');
+    });
+    $('loadExample').addEventListener('click', () => {
+      pipeline = example(); newDraft = false; scriptMode = 'existing';
+      selectStep('script');
+      showMessage('Pipeline geöffnet.');
+    });
+    $('newPipeline').addEventListener('click', () => {
+      pipeline = {source:'', period:'7 Tage', script:'',scriptType:'predefined', description:'', parameter:'', target:''};
+      newDraft = true; scriptMode = 'existing';
+      selectStep('source');
+      showMessage('Neue Pipeline erstellt.');
+    });
+    $('savePipeline').addEventListener('click', () => {
+      showMessage('Die dauerhafte Speicherung ist noch nicht angebunden.');
+    });
+    renderFlow();
+    renderDetails();
+  })();
+  </script>
+</body>
+</html>
