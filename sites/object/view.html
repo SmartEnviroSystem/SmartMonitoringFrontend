@@ -44,6 +44,7 @@
                         <li swac_hideOnEmpty="{data_collection}"><a href="#" uk-icon="icon: database; ratio: 2" uk-tooltip="Attributes"></a></li>
                         <li swac_hideOnEmpty="{meta_collection}"><a href="#" uk-icon="icon: file-text; ratio: 2" uk-tooltip="title: Metadaten"></a></li>
                         <li><a href="#" uk-icon="icon: social; ratio: 2" uk-tooltip="Childs"></a></li>
+                        <li><a href="#" uk-icon="icon: bolt; ratio: 2" uk-tooltip="Jobs" aria-label="Jobs" swac_langattr="uk-tooltip:menu_jobs aria-label:menu_jobs"></a></li>
 
                         <!--                                                    <li><a href="#" uk-icon="icon: link; ratio: 2" uk-tooltip="title: Verknüpfte Daten"></a></li>
                                                                             <li><a href="#" uk-icon="icon: folder; ratio: 2" uk-tooltip="title: Dateien"></a></li>
@@ -364,6 +365,10 @@ fetch('{{smartdataurlnenc}}/smartdata/records/tbl_datatype?storage=smartmonitori
                                         </div>
                                     </div>
                                 </div>
+                        </li>
+                        <li>
+                            <h3 class="uk-heading-divider" swac_lang="menu_jobs">Jobs</h3>
+                            <div id="object_jobs_{id}"></div>
                         </li>
                         <!--                        -->
                         <!--                                                    <li>
