@@ -28,6 +28,13 @@
     <h1 class="uk-article-title" swac_lang="job_list_headline">Job list</h1>
 
     <div id="all_jobs" swa="Present FROM datajobs TEMPLATE table_for_all_datasets"></div>
+    <div id="jobhistory_modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body uk-width-auto@m" style="min-width: 60vw;">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <h2 class="uk-modal-title" swac_lang="job_history_title">Job History</h2>
+            <div id="jobhistory" swa="Present TEMPLATE table_for_all_datasets"></div>
+        </div>
+    </div>
 </article>
 <div id="favs" swa="Favourites"></div>
 </body>
