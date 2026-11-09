@@ -8,7 +8,6 @@
         <link rel="icon" type="image/png" sizes="16x16" href="../../files/icons/16x16.png">
         <link rel="stylesheet" href="../../css/global.css" />
 
-        <script src="../../customisations/data/legend_datadesc_template.js"></script>
         <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css" />
         <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
         <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
@@ -45,7 +44,7 @@
                             <select id="station_compare_mode" class="uk-select">
                                 <option value="table" swac_lang="data_compare_table">Table</option>
                                 <option value="chart" swac_lang="data_compare_chart">Diagram</option>
-                                <option value="heatmap" swac_lang="data_compare_heatmap">Heatmap</option>
+				<option value="sampling" swac_lang="data_compare_samplung">Sampling-Rate</option> 
                             </select>
                         </label>
                         <label>
@@ -88,21 +87,11 @@
                         <div class="station_compare_label" swac_lang="data_compare_collections">Collections</div>
                         <div class="station_compare_stationlist"></div>
                         <button type="button" class="uk-button uk-button-default uk-button-small station_compare_add" swac_lang="data_compare_add_collection">Add collection</button>
-                    
-
-                        
                     </div>
-
-                    
-                        <div id="legend_heatmap" swa="Datadescription FROM datadesc" style="display: none;"></div>
-                    
-
-                        
 
                     <div class="station_compare_actions">
                         <button type="button" class="uk-button uk-button-primary station_compare_execute" swac_lang="data_compare_execute">Compare</button>
                         <button type="button" class="uk-button uk-button-default station_compare_reset" swac_lang="data_compare_reset">Reset</button>
-                   
                     </div>
                 </div>
 
