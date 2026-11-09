@@ -116,6 +116,7 @@ var app_de = {
     data_compare_add_station: 'Station hinzuf&uuml;gen',
     data_compare_mode: 'Darstellung',
     data_compare_table: 'Tabelle',
+    data_compare_heatmap: 'Wärmekarte',
     data_compare_chart: 'Diagramm',
     data_compare_execute: 'Vergleichen',
     data_compare_collection: 'Datensammlung',

@@ -127,6 +127,7 @@ ar_app_en = {
     data_compare_add_collection: 'Add data collection',
     data_compare_mode: 'Display',
     data_compare_table: 'Table',
+    data_compare_heatmap: 'Heatmap',
     data_compare_chart: 'Chart',
     data_compare_attribute: 'Attribute',
     data_compare_execute: 'Compare',

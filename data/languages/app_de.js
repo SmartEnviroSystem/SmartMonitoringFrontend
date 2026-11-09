@@ -124,6 +124,7 @@ var app_de = {
     data_compare_add_collection: 'Datensammlung hinzufügen',
     data_compare_mode: 'Darstellung',
     data_compare_table: 'Tabelle',
+    data_compare_heatmap: 'Wärmekarte',
     data_compare_chart: 'Diagramm',
     data_compare_attribute: 'Attribut',
     data_compare_execute: 'Vergleichen',

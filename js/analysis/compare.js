@@ -240,6 +240,8 @@ function renderStationRows() {
         row.querySelector('.station_compare_to_time').value = selection.toTime;
         renderAttributeSelect(row.querySelector('.station_compare_attributes'), selection.availableAttributes || [], selection.attributes);
         list.appendChild(row);
+
+    
     }
     updateAttributeSelectionMode();
     updatePeriodSelectionMode();
@@ -438,6 +440,7 @@ function resetCompareSelections() {
     document.querySelector('#station_compare_individual_to').checked = false;
     document.querySelector('#station_compare_aggregation_amount').value = 0;
     document.querySelector('#station_compare_aggregation_unit').value = 'minutes';
+    document.getElementById('legend_heatmap').style.display = 'none';
 
     compareState.globalAttributes = [];
     compareState.individualAttributes = false;
@@ -479,7 +482,6 @@ function formatTimestamp(set) {
         return String(set[dataCompareOptions.timeAttr] || '');
     return date.toLocaleString(document.documentElement.lang || 'de-DE');
 }
-
 function getMedian(values) {
     if (values.length === 0)
         return 0;
@@ -489,6 +491,52 @@ function getMedian(values) {
     let middle = Math.floor(sorted.length / 2);
     return sorted.length % 2 ? sorted[middle] : Math.round((sorted[middle - 1] + sorted[middle]) / 2);
 }
+
+function getMedianLegend(rows,index) {
+    let list = [];
+    for (let row of rows.slice(1)) {
+        let r = row[2 * index + 1];
+        if (typeof r === 'number' && Number.isFinite(r))
+            list.push(r);
+    }
+    if (list.length === 0)
+        return null;
+
+     let sorted = list.slice().sort(function (first, second) {
+        return first - second;
+    });
+
+      let middle = Math.floor(sorted.length / 2);
+    return sorted.length % 2 ? sorted[middle] : Math.round((sorted[middle - 1] + sorted[middle]) / 2);
+}
+
+
+
+function getMinLegend(rows, index) {
+    let list = [];
+    for (let row of rows.slice(1)) {
+        let r = row[2 * index + 1];
+        if (typeof r === 'number' && Number.isFinite(r))
+            list.push(r);
+    }
+    if (list.length === 0)
+        return null;
+    return Math.min(...list);
+}
+
+
+function getMaxLegend(rows, index) {
+    let list = [];
+    for (let row of rows.slice(1)) {
+        let r = row[2 * index + 1];
+        if (typeof r === 'number' && Number.isFinite(r))
+            list.push(r);
+    }
+    if (list.length === 0)
+        return null;
+    return Math.max(...list);
+}
+
 
 function getMeasurementInterval(results) {
     console.group('Intervallsuche Debug', results);
@@ -699,7 +747,105 @@ function renderTable(rows) {
     html += '</tbody></table>';
     document.querySelector('.station_compare_result').innerHTML = html;
 }
+function getInputColor(legendIndex,checkboxIndex) {
+    return getLegendHeatmap(legendIndex)
+        .querySelectorAll('.swac_datadescription_value_col')[checkboxIndex].value;
+}
 
+function getInputValue(legendIndex, rowIndex) {
+    return getLegendHeatmap(legendIndex)
+        .querySelectorAll('.swac_datadescription_value_txt')[rowIndex].value;
+}
+
+function setInputValue(legendIndex, rowIndex,value) {
+     getLegendHeatmap(legendIndex)
+        .querySelectorAll('.swac_datadescription_value_txt')[rowIndex].value =  value ;
+}
+
+function getAttributeSelection(index) {
+    return document.querySelectorAll('.station_compare_attributes')[index];
+}
+
+function getLegendHeatmap(index) {
+    return document.querySelectorAll('#legend_heatmap .legend_clone .uk-open.swac_repeatedForLegend')[index];
+}
+function setLegendTitle(legend,text){
+legend.querySelector('.swac_datadescription_wrapper_title').textContent =text;
+}
+
+
+function renderLegend(length, rows) {
+    const rootLegend = document.getElementById('legend_heatmap');
+    rootLegend.style.display = 'block';
+
+    if (!rootLegend._legendTemplate) {
+        rootLegend._legendTemplate = rootLegend.querySelector('.uk-accordion-default.uk-accordion');
+        rootLegend._legendTemplate.style.display = 'none';
+    }
+
+    // Nur neu bauen, wenn sich die Anzahl der Legenden geändert hat
+    let clones = rootLegend.querySelectorAll('.legend_clone');
+    if (clones.length !== length) {
+        clones.forEach(function (clone) { clone.remove(); });
+        for (let i = 0; i < length; i++) {
+            let clone = rootLegend._legendTemplate.cloneNode(true);
+            clone.classList.add('legend_clone');
+            clone.style.display = 'block';
+            rootLegend.appendChild(clone);
+        }
+    }
+
+    for (let i = 0; i < length; i++) {
+        setLegendTitle(getLegendHeatmap(i), getAttributeSelection(i).value);
+
+        let check = getLegendHeatmap(i).querySelector('.swac_datadescription_datacheck');
+if (!check.checked)
+    continue;   
+
+let threshold1 = (getMinLegend(rows, i) + getMedianLegend(rows, i)) / 2;
+let threshold2 =  (getMaxLegend(rows, i) + getMedianLegend(rows, i)) / 2;
+let threshold3 = getMaxLegend(rows, i);
+
+setInputValue(i, 0, threshold1);
+setInputValue(i, 1, threshold2);
+setInputValue(i, 2, threshold3);
+    }
+}
+
+function getDataCollectionRows(){
+    return document.querySelector('.station_compare_stationlist').getElementsByClassName('station_compare_stationrow').length
+}
+
+
+function renderHeatmap(rows) {
+    renderLegend(getDataCollectionRows(),rows);
+    
+     
+
+let html = '<table class="uk-table uk-table-divider uk-table-striped station_compare_table"><thead><tr>';
+for (let header of rows[0])
+    html += '<th>' + escapeHtml(header) + '</th>';
+html += '</tr></thead><tbody>';
+for (let row of rows.slice(1)) {
+    html += '<tr>' + row.map(function (value) {
+        let displayValue = typeof value === 'number' ? formatNumber(value) : value;
+        let style = '';
+        if (typeof value === 'number') {
+            if (value <= getInputValue(0, 0))
+                style = ' style="background-color:' + getInputColor(0, 0) + '"';
+            else if (value <= getInputValue(0, 1))
+                style = ' style="background-color:' + getInputColor(0, 1) + '"';
+            else
+                style = ' style="background-color:' + getInputColor(0, 2) + '"';
+        }
+        return '<td class="station_compare_value"' + style + '>' + escapeHtml(displayValue) + '</td>';
+    }).join('') + '</tr>';
+}
+html += '</tbody></table>';
+document.querySelector('.station_compare_result').innerHTML = html;
+
+
+}
 function renderChart(comparison) {
     if (typeof Chart === 'undefined') {
         setStatus(getComparisonText('data_compare_chart_error', 'The chart could not be loaded.'));
@@ -751,10 +897,16 @@ function renderComparison() {
         return;
     }
     setStatus('');
-    if (document.querySelector('#station_compare_mode').value === 'chart')
+    let tempStationCompareMode = document.querySelector('#station_compare_mode').value;
+
+    if(tempStationCompareMode == 'chart'){
         renderChart(comparison);
-    else
+    }else if(tempStationCompareMode == 'table'){
         renderTable(rows);
+    }else{
+
+        renderHeatmap(rows);
+    }
 }
 
 function executeComparison() {
@@ -970,6 +1122,7 @@ function initialise(stations) {
     document.querySelector('.station_compare_reset_aggregation').addEventListener('click', resetAggregation);
     document.querySelector('.station_compare_export').addEventListener('click', exportComparison);
     document.querySelector('#station_compare_mode').addEventListener('change', function () {
+        
         if (compareState.results.length > 0)
             renderComparison();
     });
@@ -981,7 +1134,6 @@ document.addEventListener('swac_lang_loaded', function () {
     updateGlobalAttributeOptions();
     renderStationRows();
 });
-
 function loadStations() {
     window.swac.Model.load({
         fromName: dataCompareOptions.stationSource,
@@ -996,7 +1148,6 @@ function loadStations() {
         setStatus(getComparisonText('data_compare_collections_error', 'The stations could not be loaded.'));
     });
 }
-
 if (window.swac && window.swac.Model)
     loadStations();
 else
