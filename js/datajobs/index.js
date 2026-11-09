@@ -37,34 +37,38 @@ window['all_jobs_options'].plugins.set('TableActions', {
                 {
                     id: 'show',
                     icon: 'history',
-                    title: 'Show Job History',
+                    get title() {
+                        return window.swac.lang.getTranslationForId('job_show_histoy');
+                    },
                     onClick: show
                 },
                 {
                     id: 'play',
                     icon: 'play',
-                    title: 'Start Job',
+                    get title() {
+                        return window.swac.lang.getTranslationForId('job_start');
+                    },
                     onClick: start
                 },
                 {
                     id: 'replay',
                     icon: 'refresh',
-                    title: 'Replay Job',
+                    get title() {
+                        return window.swac.lang.getTranslationForId('job_replay');
+                    },
                     onClick: replay
                 },
                 {
                     id: 'stopJob',
                     icon: 'ban',
-                    title: 'Stop Job',
+                    get title() {
+                        return window.swac.lang.getTranslationForId('job_stop');
+                    },
                     onClick: stopJob
                 },
             ]
         }
     );
-
-function show(record) {
-    console.log('show:', record.set_json);
-}
 
 function start(record) {
     console.log('start:', record.set_json);
@@ -76,4 +80,18 @@ function replay(record) {
 
 function stopJob(record) {
     console.log('stop:', record.set_json);
+}
+
+window['jobhistory_options'] = {
+    showWhenNoData: true
+};
+
+function show(record) {
+    let job = record && record.set_json ? record.set_json : record;
+    if (typeof job === 'string') job = JSON.parse(job);
+
+    document.getElementById('jobhistory').swac_comp.addDataFromReference(
+        'ref://datajobs_log?storage=smartmonitoring&filter=datajob_id,eq,' + job.id + '&order=id,DESC'
+    );
+    UIkit.modal('#jobhistory_modal').show();
 }
