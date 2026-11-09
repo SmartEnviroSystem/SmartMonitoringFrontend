@@ -634,6 +634,11 @@ var app_de = {
     media_upload_notavail: 'Die Funktion ist f&uuml;r das ausgew&auml;hlte Objekt nicht verf&uuml;gbar. Bitte kontaktiere den Administrator.',
 
     job_list_headline: 'Verwalte Jobs',
+    job_history_title: "Job Historie",
+    job_show_histoy: "Job Historie anzeigen",
+    job_start: "Job starten",
+    job_replay: "Job erneut starten",
+    job_stop: "Job beenden",
 
     device_index_title: '',
     device_welcome: 'Dein Ger&auml;t:',

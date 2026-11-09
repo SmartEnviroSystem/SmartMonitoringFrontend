@@ -1,4 +1,4 @@
-ar_app_en = {
+var app_en = {
     menu_object: 'Objects',
     menu_object_list: 'List',
     menu_object_dashboard: 'Dashboard',
@@ -663,6 +663,11 @@ ar_app_en = {
     media_upload_notavail: 'The function is not available for the selected object. Please contact the administrator.',
 
     job_list_headline: 'Job List',
+    job_history_title: 'Job History',
+    job_show_histoy: "Show job history",
+    job_start: "Start job",
+    job_replay: "Restart job",
+    job_stop: "Stop job",
 
     device_index_title: '',
     device_welcome: 'Your device:',
