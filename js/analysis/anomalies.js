@@ -1,17 +1,12 @@
 // Project specific anomaly detection settings.
+// Device, measured value and time attribute are selected with the SWAC
+// component Dataselect, its options are set in anomalies.html.
 var anomaliesOptions = {
-    deviceSource: 'tbl_observedobject',
-    deviceFilter: 'data_collection,nis',
-    deviceNameAttr: 'name',
-    collectionAttr: 'data_collection',
-    defaultTimeAttr: 'ts',
+    sourceId: 'anomalies_source',
     defaultPeriodDays: 30,
     storage: 'smartmonitoring',
     smartdataUrl: '/SmartData',
     lyserUrl: '/SmartDataLyser/smartdatalyser/anomaly/',
-    excludedAttributes: ['id', 'oo_id', 'pos_accuracy', 'pos_altitude_accuracy', 'pos_heading', 'pos_speed'],
-    numericTypes: ['int2', 'int4', 'int8', 'float4', 'float8', 'numeric', 'decimal', 'smallint', 'integer', 'bigint', 'real', 'double precision'],
-    timeTypes: ['timestamp', 'timestamptz', 'timestamp without time zone', 'timestamp with time zone'],
     seriesColor: '#1e87f0',
     checkColors: {
         rateofchange: '#d62728',
@@ -35,19 +30,8 @@ var anomaliesParameterLabels = {
 };
 
 var anomaliesState = {
-    devices: [],
     chart: null
 };
-
-function getSets(source) {
-    if (!source)
-        return [];
-    if (typeof source[Symbol.iterator] === 'function')
-        return Array.from(source);
-    if (source.getSets)
-        return source.getSets().filter(Boolean);
-    return [];
-}
 
 function getAnomaliesText(key, fallback) {
     let language = window.swac && window.swac.lang;
@@ -56,18 +40,6 @@ function getAnomaliesText(key, fallback) {
 
 function setStatus(message) {
     document.querySelector('.anomalies_status').textContent = message || '';
-}
-
-/**
- * Creates an option element whose text is translated by SWAC.
- */
-function createOption(value, text, langKey) {
-    let option = document.createElement('option');
-    option.value = value;
-    option.textContent = langKey ? getAnomaliesText(langKey, text) : text;
-    if (langKey)
-        option.setAttribute('swac_lang_id', langKey);
-    return option;
 }
 
 /**
@@ -88,98 +60,23 @@ function setDefaultPeriod() {
     document.querySelector('#anomalies_to').value = toDateTimeLocal(to);
 }
 
-function getSelectedDevice() {
-    let id = document.querySelector('#anomalies_device').value;
-    return anomaliesState.devices.find(function (device) {
-        return String(device.id) === id;
-    });
-}
-
-function renderDevices() {
-    let select = document.querySelector('#anomalies_device');
-    select.innerHTML = '';
-    select.appendChild(createOption('', 'Select device', 'data_anomalies_select_device'));
-    for (let device of anomaliesState.devices) {
-        let name = device[anomaliesOptions.deviceNameAttr] || device[anomaliesOptions.collectionAttr];
-        select.appendChild(createOption(device.id, name + ' (' + device[anomaliesOptions.collectionAttr] + ')'));
-    }
-
-    // Preselect device given by url, e.g. anomalies.html?oo_id=3
-    let ooId = new URLSearchParams(window.location.search).get('oo_id');
-    if (ooId && anomaliesState.devices.some(device => String(device.id) === ooId)) {
-        select.value = ooId;
-        loadAttributes();
-    }
-}
-
-function resetAttributeSelects(langKey, fallback) {
-    let attrSelect = document.querySelector('#anomalies_attribute');
-    attrSelect.innerHTML = '';
-    attrSelect.appendChild(createOption('', fallback, langKey));
-    attrSelect.disabled = true;
-
-    let timeSelect = document.querySelector('#anomalies_timeattr');
-    timeSelect.innerHTML = '';
-    timeSelect.disabled = true;
+/**
+ * Gets the Dataselect component once SWAC has loaded it.
+ */
+function getSourceComponent() {
+    let comp = document.getElementById(anomaliesOptions.sourceId).swac_comp;
+    return comp && comp.getSelection ? comp : null;
 }
 
 /**
- * Loads the structure of the selected devices data collection from SmartData
- * and offers its numeric attributes as measured values.
+ * Gets device, measured value and time attribute selected in the Dataselect
+ * component.
+ *
+ * @returns {Object} {id, name, collection, attribute, timeAttr} or null
  */
-function loadAttributes() {
-    let device = getSelectedDevice();
-    if (!device) {
-        resetAttributeSelects('data_anomalies_select_device_first', 'Select device first');
-        return;
-    }
-    resetAttributeSelects('data_anomalies_loading', 'Loading ...');
-
-    window.swac.Model.getValueDefinitions({
-        fromName: device[anomaliesOptions.collectionAttr]
-    }).then(function (attributes) {
-        let numeric = [];
-        let times = [];
-        for (let attribute of attributes || []) {
-            if (anomaliesOptions.excludedAttributes.includes(attribute.name))
-                continue;
-            if (anomaliesOptions.timeTypes.includes(attribute.type))
-                times.push(attribute.name);
-            else if (anomaliesOptions.numericTypes.includes(attribute.type))
-                numeric.push(attribute.name);
-        }
-        numeric.sort();
-        renderAttributes(numeric, times);
-    }).catch(function (error) {
-        console.error('Anomaly detection could not load the data structure.', error);
-        resetAttributeSelects('data_anomalies_structure_error', 'Data structure could not be loaded');
-        setStatus(getAnomaliesText('data_anomalies_structure_error', 'Data structure could not be loaded'));
-    });
-}
-
-function renderAttributes(numeric, times) {
-    let attrSelect = document.querySelector('#anomalies_attribute');
-    attrSelect.innerHTML = '';
-    if (numeric.length === 0) {
-        attrSelect.appendChild(createOption('', 'No numeric values', 'data_anomalies_no_numeric'));
-    } else {
-        attrSelect.appendChild(createOption('', 'Select measured value', 'data_anomalies_select_attribute'));
-        for (let name of numeric)
-            attrSelect.appendChild(createOption(name, name));
-        attrSelect.disabled = false;
-    }
-
-    let timeSelect = document.querySelector('#anomalies_timeattr');
-    timeSelect.innerHTML = '';
-    for (let name of times)
-        timeSelect.appendChild(createOption(name, name));
-    if (times.includes(anomaliesOptions.defaultTimeAttr))
-        timeSelect.value = anomaliesOptions.defaultTimeAttr;
-    timeSelect.disabled = times.length < 2;
-    if (times.length === 0)
-        setStatus(getAnomaliesText('data_anomalies_no_timeattr', 'The data has no time attribute.'));
-    else
-        setStatus('');
+function getSource() {
+    let comp = getSourceComponent();
+    return comp ? comp.getSelection() : null;
 }
 
 /**
@@ -200,13 +97,13 @@ function updateCheckParams() {
  * @returns {Object[]} List of {check, url}
  */
 function buildRequests() {
-    let device = getSelectedDevice();
+    let source = getSource();
     let common = new URLSearchParams({
         smartdataurl: anomaliesOptions.smartdataUrl,
         storage: anomaliesOptions.storage,
-        collection: device[anomaliesOptions.collectionAttr],
-        dateattribute: document.querySelector('#anomalies_timeattr').value || anomaliesOptions.defaultTimeAttr,
-        attribute: document.querySelector('#anomalies_attribute').value,
+        collection: source.collection,
+        dateattribute: source.timeAttr,
+        attribute: source.attribute,
         start: document.querySelector('#anomalies_from').value,
         end: document.querySelector('#anomalies_to').value
     });
@@ -234,10 +131,13 @@ function buildRequests() {
 }
 
 function validateForm() {
-    if (!getSelectedDevice())
+    let source = getSource();
+    if (!source)
         return getAnomaliesText('data_anomalies_error_device', 'Please select a device.');
-    if (!document.querySelector('#anomalies_attribute').value)
+    if (!source.attribute)
         return getAnomaliesText('data_anomalies_error_attribute', 'Please select a measured value.');
+    if (!source.timeAttr)
+        return getAnomaliesText('data_anomalies_no_timeattr', 'Please select the time attribute.');
     let from = document.querySelector('#anomalies_from').value;
     let to = document.querySelector('#anomalies_to').value;
     if (!from || !to || from >= to)
@@ -311,9 +211,10 @@ function runCheck(request) {
  * @returns {Promise} List of {x: milliseconds, y: value}
  */
 function loadSeries() {
-    let collection = getSelectedDevice()[anomaliesOptions.collectionAttr];
-    let timeAttr = document.querySelector('#anomalies_timeattr').value || anomaliesOptions.defaultTimeAttr;
-    let attribute = document.querySelector('#anomalies_attribute').value;
+    let source = getSource();
+    let collection = source.collection;
+    let timeAttr = source.timeAttr;
+    let attribute = source.attribute;
     let params = new URLSearchParams({
         storage: anomaliesOptions.storage,
         includes: timeAttr + ',' + attribute,
@@ -435,7 +336,7 @@ function renderChart(series, results) {
     chartElem.hidden = false;
 
     let datasets = [{
-            label: document.querySelector('#anomalies_attribute').value,
+            label: getSource().attribute,
             data: series,
             borderColor: anomaliesOptions.seriesColor,
             backgroundColor: anomaliesOptions.seriesColor,
@@ -514,9 +415,7 @@ function executeAnalysis(event) {
     });
 }
 
-function initialise(devices) {
-    anomaliesState.devices = devices;
-    renderDevices();
+function initialise() {
     setDefaultPeriod();
     updateCheckParams();
 
@@ -526,33 +425,21 @@ function initialise(devices) {
         // Wait until the browser has reset the inputs
         setTimeout(function () {
             setDefaultPeriod();
-            resetAttributeSelects('data_anomalies_select_device_first', 'Select device first');
+            let comp = getSourceComponent();
+            if (comp)
+                comp.setSelection('');
             updateCheckParams();
             setStatus('');
             clearResult();
         }, 0);
     });
-    document.querySelector('#anomalies_device').addEventListener('change', loadAttributes);
+    // Old results do not match a new selection
+    document.addEventListener('swac_' + anomaliesOptions.sourceId + '_dataselect_changed', function () {
+        setStatus('');
+        clearResult();
+    });
     for (let check of document.querySelectorAll('.anomalies_check'))
         check.addEventListener('change', updateCheckParams);
 }
 
-function loadDevices() {
-    window.swac.Model.load({
-        fromName: anomaliesOptions.deviceSource,
-        fromWheres: {
-            filter: anomaliesOptions.deviceFilter,
-            order: anomaliesOptions.deviceNameAttr + ',ASC'
-        }
-    }).then(function (source) {
-        initialise(getSets(source));
-    }).catch(function (error) {
-        console.error('Anomaly detection could not load devices.', error);
-        setStatus(getAnomaliesText('data_anomalies_devices_error', 'The devices could not be loaded.'));
-    });
-}
-
-if (window.swac && window.swac.Model)
-    loadDevices();
-else
-    document.addEventListener('swac_ready', loadDevices, {once: true});
+initialise();
