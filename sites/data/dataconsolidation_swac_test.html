@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartMonitoring – DataConsolidation SWAC Test</title>
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css">
+  <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
+  <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
+  <script src="/SWAC/swac/swac.js" type="module"></script>
+</head>
+<body>
+  <header id="head_navigation" swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC"></header>
+  <div id="userform" swa="User"></div>
+  <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
+  <div id="dataConsolidation" swa="DataConsolidation"></div>
+</body>
+</html>
