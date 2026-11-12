@@ -8,7 +8,7 @@
         <link rel="icon" type="image/png" sizes="16x16" href="../../files/icons/16x16.png">
         <link rel="stylesheet" href="../../css/global.css" />
         
-        <script src="../../customisations/data/legend_datadesc_template.js"></script>
+        <script src="../../customisations/data/exampledata.js"></script>
         <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css" />
         <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
         <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
@@ -32,6 +32,8 @@
             <article class="uk-article">
                 <h1 class="uk-heading-bullet" swac_lang="data_compare_headline">Data comparison</h1>
                 <p class="uk-article-meta" swac_lang="data_compare_desc">Compare data from multiple collections.</p>
+
+                <div id="testtesttest" swa="DataSelect FROM tbl_observedobject"></div>
 
                 <div id="station_compare" class="station_compare">
                     <div class="station_compare_togglebar uk-margin-small-bottom">
@@ -90,7 +92,8 @@
                         <div class="station_compare_label" swac_lang="data_compare_collections">Collections</div>
                         <div class="station_compare_stationlist"></div>
                         <button type="button" class="uk-button uk-button-default uk-button-small station_compare_add" swac_lang="data_compare_add_collection">Add collection</button>
-                        <div id="legend_heatmap" swa="Datadescription FROM datadesc" style="display: none;"></div>
+
+                      <div id="table_example" swa="Datadescription FROM exampleData"></div>
 
 
                     </div>
