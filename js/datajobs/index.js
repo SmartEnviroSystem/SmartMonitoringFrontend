@@ -1,3 +1,4 @@
+//construct list view when swac_component_complete event triggers
 document.addEventListener('swac_components_complete', async () => {
     try {
         const {createJobList} = await import('./joblist.js');

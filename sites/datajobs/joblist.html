@@ -1,4 +1,27 @@
-<div data-joblist="list" swa="Present TEMPLATE table_for_all_datasets"></div>
+<p data-joblist="message" class="uk-alert-warning" role="status" hidden></p>
+<div data-joblist="list" swa="Present">
+    <table class="uk-table uk-table-divider">
+        <thead>
+            <tr>
+                <th data-job-column="name">name</th>
+                <th data-job-column="job_status">job_status</th>
+                <th data-job-column="job_last_result">job_last_result</th>
+                <th data-job-column="job_last_duration">job_last_duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="swac_repeatForSet">
+                <td><span attrname="name">{name}</span></td>
+                <td>
+                    <span attrname="job_status">—</span>
+                    <span data-job-running uk-spinner="ratio: 0.5" aria-hidden="true" hidden></span>
+                </td>
+                <td><span attrname="job_last_result">—</span></td>
+                <td><span attrname="job_last_duration">—</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 <div data-joblist="history-modal" uk-modal>
     <div class="uk-modal-dialog uk-modal-body uk-width-auto@m" style="min-width: 60vw;">
         <button class="uk-modal-close-default" type="button" uk-close></button>
