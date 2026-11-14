@@ -641,3 +641,129 @@ window['labels_datamap_options'] = {
     },
     datasets: true
 };
+
+/**
+ * Collections with raster data (e.g. satellite data). Each dataset of such a
+ * collection is the value for an area around its position (raster cell). For
+ * these collections the datamap draws colored areas instead of markers.
+ *
+ * Options per collection:
+ * - cellSize: Edge length of a raster cell in meters
+ * - cellSizeDeg: Size of a raster cell in degrees [longitude, latitude], used
+ *   instead of cellSize when the grid is in degrees (no gaps between cells)
+ * - cellsPerTimestep: Number of cells of one complete raster. Exactly this
+ *   number of the newest datasets is loaded, so only the newest point in time is shown.
+ * - colorAttr: Attribute used for coloring at start
+ * - attributes: Attributes the user can choose for coloring
+ * - datadescription: Name of the variable with the description of the values
+ * - startPointLat, startPointLon, zoom: Start view of the map
+ */
+window['datamap_rastercollections'] = {
+    exampledata_rasterdata: {
+        cellSize: 3000, // about 3 x 3 km
+        cellSizeDeg: [0.039964, 0.026815], // exact grid of the satellite data
+        cellsPerTimestep: 4489, // 67 x 67 cells
+        colorAttr: 'IR_134', // Infrared shows clouds at day and night
+        attributes: ['IR_134', 'VIS006', 'VIS008', 'HRV', 'IR_016', 'WV_062', 'WV_073'],
+        datadescription: 'datadesc_raster',
+        startPointLat: 47.86,
+        startPointLon: 12.12,
+        zoom: 8
+    }
+};
+
+/**
+ * Gets the raster configuration for the collection selected in the URL.
+ *
+ * @returns {Object|null} Raster configuration or null for normal (point) data
+ */
+function getDatamapRasterConfig() {
+    let collection = new URLSearchParams(window.location.search).get('data_collection');
+    if (!collection)
+        return null;
+    let config = window['datamap_rastercollections'][collection];
+    return config ? config : null;
+}
+
+/**
+ * Changes the datamap for raster data: areas instead of markers, one point
+ * in time, coloring by the satellite channels.
+ * Must run before SWAC starts (SWAC starts on DOMContentLoaded).
+ */
+(function applyDatamapRasterConfig() {
+    let raster = getDatamapRasterConfig();
+    if (!raster)
+        return;
+
+    // Map: draw raster cells, no markers and no clusters
+    let mapOptions = window['datamap_options'];
+    mapOptions.areaShape = 'rect';
+    mapOptions.areaSize = raster.cellSize;
+    mapOptions.areaSizeDeg = raster.cellSizeDeg ? raster.cellSizeDeg : null;
+    mapOptions.areaOnly = true;
+    mapOptions.areaStyle = {weight: 0, fillOpacity: 0.6};
+    mapOptions.clusterMarkers = false;
+    mapOptions.startPointLat = raster.startPointLat;
+    mapOptions.startPointLon = raster.startPointLon;
+    mapOptions.zoom = raster.zoom;
+    // All coloring settings at one place, the colors come from the datadescription
+    mapOptions.plugins.set('ColorSelect', {
+        id: 'ColorSelect',
+        active: true,
+        colorAttr: raster.colorAttr,
+        attributes: raster.attributes,
+        startOpened: true
+    });
+    // Data window when clicking on a cell
+    window['datashowmodal_datamap_options'].attributeOrder = ['ts'].concat(raster.attributes);
+    window['datamap_datadescription_options'] = {
+        visuAttribute: raster.colorAttr
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Load exactly one complete raster (the newest point in time)
+        let map = document.getElementById('datamap');
+        map.setAttribute('swa', map.getAttribute('swa')
+                .replace(/size=\d+/, 'size=' + raster.cellsPerTimestep));
+        // Use the description of the raster values
+        let datadesc = document.getElementById('datamap_datadescription');
+        datadesc.setAttribute('swa', 'Datadescription FROM ' + raster.datadescription);
+
+        // Show which point in time is displayed
+        let info = document.createElement('p');
+        info.id = 'datamap_raster_info';
+        info.classList.add('uk-article-meta');
+        map.parentElement.insertBefore(info, map);
+        document.addEventListener('swac_datamap_complete', function () {
+            showDatamapRasterTime(map, info);
+        });
+    });
+})();
+
+/**
+ * Shows the point in time of the displayed raster data.
+ *
+ * @param {HTMLElement} map Datamap element
+ * @param {HTMLElement} info Element to show the information in
+ * @returns {undefined}
+ */
+function showDatamapRasterTime(map, info) {
+    let comp = map.swac_comp;
+    if (!comp || !comp.data)
+        return;
+    let times = new Set();
+    let count = 0;
+    for (let curSource in comp.data) {
+        for (let curSet of comp.data[curSource].getSets()) {
+            if (!curSet)
+                continue;
+            count++;
+            if (curSet.ts)
+                times.add(curSet.ts);
+        }
+    }
+    if (times.size === 0)
+        return;
+    let shown = [...times].map(ts => new Date(ts).toLocaleString()).join(', ');
+    info.textContent = 'Rasterdaten: ' + count + ' Zellen, Zeitpunkt ' + shown;
+}
