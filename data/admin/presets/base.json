@@ -712,6 +712,14 @@
                             "active": false
                         },
                         {
+                            "id": 704,
+                            "name": "testSeite",
+                            "rfrom": "*",
+                            "rto": "analysis/testSeite.html",
+                            "parent": 700,
+                            "active": true
+                        },
+                        {
                             "id": 800,
                             "name": "menu_datamap",
                             "rfrom": "*",
