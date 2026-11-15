@@ -12,6 +12,7 @@
         <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
         <script src="../../js/analysis/samplingrate.js" type="module"></script>
         <script src="/SWAC/swac/swac.js" type="module"></script>
+	<script src="/SWAC/swac/Component.js" type="module"></script
         <link rel="stylesheet" href="../../customisations/global.css" />
     </head>
     <body>
@@ -22,9 +23,11 @@
         <div class="section">
             <article class="uk-article">
                 <h1 class="uk-heading-bullet" swac_lang="data_sampling_headline">Sampling Rate</h1>
-                <div id="heatmap_source" class="uk-margin" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC"></div>
+                <div id="samplingrate_source" class="uk-margin" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC"></div>
         	<button type="button" class="uk-button uk-button-primary station_sampling_execute" swac_lang="data_sampling_execute">Calculate</button>        
 	</div>
+		
+<div id="charts_example1" swa="Charts FROM Dataselect"></div>
                 </div>
             </article>
         </div>
