@@ -17,6 +17,7 @@
             var anomalies_source_options = {
                 attributeTypes: ['int2', 'int4', 'int8', 'float4', 'float8', 'numeric', 'decimal'],
                 attributeRequired: true,
+                showPeriod: true,
                 excludedAttributes: ['id', 'oo_id', 'pos_accuracy', 'pos_altitude_accuracy', 'pos_heading', 'pos_speed']
             };
         </script>
@@ -49,25 +50,8 @@
                     <!-- Step 1: Which data should be analysed -->
                     <fieldset class="uk-fieldset uk-margin">
                         <legend class="uk-legend" swac_lang="data_anomalies_data">Data</legend>
-                        <!--
-                            One row on wide screens. Left half: device, measured value and (if needed)
-                            time attribute from the SWAC component Dataselect. Right half: period.
-                        -->
-                        <div class="uk-grid-small uk-child-width-1-2@m" uk-grid>
-                            <div id="anomalies_source" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC" required></div>
-                            <div>
-                                <div class="uk-grid-small uk-child-width-1-2@s" uk-grid>
-                                    <div>
-                                        <label class="uk-form-label" for="anomalies_from"><span swac_lang="data_anomalies_from">From</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_from" tabindex="0"></span></label>
-                                        <input id="anomalies_from" class="uk-input" type="datetime-local" required>
-                                    </div>
-                                    <div>
-                                        <label class="uk-form-label" for="anomalies_to"><span swac_lang="data_anomalies_to">Till</span> <span class="uk-text-muted" uk-icon="icon: info; ratio: 0.8" uk-tooltip="data_anomalies_info_to" tabindex="0"></span></label>
-                                        <input id="anomalies_to" class="uk-input" type="datetime-local" required>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Device, measured value, period and (if needed) time attribute, see SWAC component Dataselect -->
+                        <div id="anomalies_source" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC" required></div>
 
                         <ul uk-accordion class="uk-margin-small-top">
                             <li>

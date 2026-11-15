@@ -1,9 +1,8 @@
 // Project specific anomaly detection settings.
-// Device, measured value and time attribute are selected with the SWAC
-// component Dataselect, its options are set in anomalies.html.
+// Device, measured value, time attribute and period are selected with the
+// SWAC component Dataselect, its options are set in anomalies.html.
 var anomaliesOptions = {
     sourceId: 'anomalies_source',
-    defaultPeriodDays: 30,
     storage: 'smartmonitoring',
     smartdataUrl: '/SmartData',
     lyserUrl: '/SmartDataLyser/smartdatalyser/anomaly/',
@@ -43,24 +42,6 @@ function setStatus(message) {
 }
 
 /**
- * Formats a date as value for an input of type datetime-local (local time).
- */
-function toDateTimeLocal(date) {
-    let pad = function (number) {
-        return String(number).padStart(2, '0');
-    };
-    return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate())
-            + 'T' + pad(date.getHours()) + ':' + pad(date.getMinutes());
-}
-
-function setDefaultPeriod() {
-    let to = new Date();
-    let from = new Date(to.getTime() - anomaliesOptions.defaultPeriodDays * 24 * 60 * 60 * 1000);
-    document.querySelector('#anomalies_from').value = toDateTimeLocal(from);
-    document.querySelector('#anomalies_to').value = toDateTimeLocal(to);
-}
-
-/**
  * Gets the Dataselect component once SWAC has loaded it.
  */
 function getSourceComponent() {
@@ -69,10 +50,10 @@ function getSourceComponent() {
 }
 
 /**
- * Gets device, measured value and time attribute selected in the Dataselect
- * component.
+ * Gets device, measured value, time attribute and period selected in the
+ * Dataselect component.
  *
- * @returns {Object} {id, name, collection, attribute, timeAttr} or null
+ * @returns {Object} {id, name, collection, attribute, timeAttr, from, to} or null
  */
 function getSource() {
     let comp = getSourceComponent();
@@ -104,8 +85,8 @@ function buildRequests() {
         collection: source.collection,
         dateattribute: source.timeAttr,
         attribute: source.attribute,
-        start: document.querySelector('#anomalies_from').value,
-        end: document.querySelector('#anomalies_to').value
+        start: source.from,
+        end: source.to
     });
     let measurefreq = document.querySelector('#anomalies_measurefreq').value;
     if (measurefreq)
@@ -138,10 +119,7 @@ function validateForm() {
         return getAnomaliesText('data_anomalies_error_attribute', 'Please select a measured value.');
     if (!source.timeAttr)
         return getAnomaliesText('data_anomalies_no_timeattr', 'Please select the time attribute.');
-    let from = document.querySelector('#anomalies_from').value;
-    let to = document.querySelector('#anomalies_to').value;
-    if (!from || !to || from >= to)
-        return getAnomaliesText('data_anomalies_error_period', 'The start must be before the end.');
+    // The period is checked by Dataselect, the browser blocks the submit if it is invalid
     if (document.querySelectorAll('.anomalies_check:checked').length === 0)
         return getAnomaliesText('data_anomalies_error_check', 'Please select at least one check.');
     return null;
@@ -220,8 +198,8 @@ function loadSeries() {
         includes: timeAttr + ',' + attribute,
         order: timeAttr + ',ASC'
     });
-    params.append('filter', timeAttr + ',gt,' + document.querySelector('#anomalies_from').value);
-    params.append('filter', timeAttr + ',lt,' + document.querySelector('#anomalies_to').value);
+    params.append('filter', timeAttr + ',gt,' + source.from);
+    params.append('filter', timeAttr + ',lt,' + source.to);
     let url = anomaliesOptions.smartdataUrl + '/smartdata/records/' + encodeURIComponent(collection) + '?' + params.toString();
 
     return fetch(url).then(function (response) {
@@ -416,15 +394,13 @@ function executeAnalysis(event) {
 }
 
 function initialise() {
-    setDefaultPeriod();
     updateCheckParams();
 
     let form = document.querySelector('#anomalies_form');
     form.addEventListener('submit', executeAnalysis);
     form.addEventListener('reset', function () {
-        // Wait until the browser has reset the inputs
+        // Wait until the browser has reset the inputs (the period goes back to the Dataselect preset)
         setTimeout(function () {
-            setDefaultPeriod();
             let comp = getSourceComponent();
             if (comp)
                 comp.setSelection('');
