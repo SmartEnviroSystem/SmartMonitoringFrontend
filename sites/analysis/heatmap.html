@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
     <head>
-        <title>testSeite</title>
+        <title swac_lang="data_heatmap_title">Data &gt; Heatmap</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/png" sizes="32x32" href="../../files/icons/32x32.png">
@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css" />
         <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
         <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
-        <script src="../../js/analysis/testSeite.js" type="module"></script>
+        <script src="../../js/analysis/heatmap.js" type="module"></script>
         <script src="/SWAC/swac/swac.js" type="module"></script>
         <link rel="stylesheet" href="../../customisations/global.css" />
     </head>
@@ -21,19 +21,14 @@
 
         <div class="section">
             <article class="uk-article">
-                <h1 class="uk-heading-bullet">testSeite</h1>
-                <!-- One row: display a third, Dataselect (device and measured value, see SWAC component) the rest -->
-                <div class="uk-grid-small uk-margin" uk-grid>
-                    <div class="uk-width-1-3@s">
-                        <label class="uk-form-label" for="test_display">Darstellung</label>
-                        <select id="test_display" class="uk-select">
-                            <option value="heatmap">Heatmap</option>
-                        </select>
-                    </div>
-                    <div id="test_source" class="uk-width-expand@s" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC"></div>
+                <h1 class="uk-heading-bullet" swac_lang="data_heatmap_headline">Heatmap</h1>
+                <!-- Device and measured value, see SWAC component Dataselect. The heatmap loads as soon as both are selected. -->
+                <div id="heatmap_source" class="uk-margin" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC"></div>
+                <div class="heatmap_loading uk-margin" hidden>
+                    <span uk-spinner="ratio: 0.8"></span> <span swac_lang="data_heatmap_loading">Loading heatmap ...</span>
                 </div>
-                <div id="test_legend" swa="Datadescription TEMPLATE min_median_max"></div>
-                <div id="test_result" hidden>
+                <div id="heatmap_legend" swa="Datadescription TEMPLATE min_median_max"></div>
+                <div id="heatmap_result" hidden>
                 </div>
             </article>
         </div>

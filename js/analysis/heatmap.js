@@ -1,7 +1,7 @@
 import ViewHandler from '/SWAC/swac/ViewHandler.js';
 
-window.test_heatmap_options = {
-    datadescription: 'test_legend',
+window.heatmap_view_options = {
+    datadescription: 'heatmap_legend',
     autoLegend: true,
     customBeforeAddSet: function (set) {
         set.TS = '';
@@ -21,47 +21,53 @@ window.test_heatmap_options = {
             set.TS = formatDuration(new Date(set.ts).getTime() - start);
     }
 };
-window.test_legend_options = {formatAttributeBorders: false};
-window.test_source_options = {attributeRequired: true};
+window.heatmap_legend_options = {formatAttributeBorders: false};
+window.heatmap_source_options = {attributeRequired: true};
 
-function getTestSelection() {
-    let source = document.getElementById('test_source').swac_comp;
+function getHeatmapSelection() {
+    let source = document.getElementById('heatmap_source').swac_comp;
     return (source && source.getSelection && source.getSelection()) || {};
 }
 
 let heatmapUpdate = Promise.resolve();
-function updateTestHeatmap() {
-    let result = document.getElementById('test_result');
+function updateHeatmap() {
+    let result = document.getElementById('heatmap_result');
     result.hidden = true;
     heatmapUpdate = heatmapUpdate.then(async function () {
-        let collection = getTestSelection().collection;
-        let attribute = getTestSelection().attribute;
+        let collection = getHeatmapSelection().collection;
+        let attribute = getHeatmapSelection().attribute;
         if (!collection || !attribute)
             return;
-        let availableAttributes = document.getElementById('test_source').swac_comp.getAttributes().map(function (definition) {
+        let availableAttributes = document.getElementById('heatmap_source').swac_comp.getAttributes().map(function (definition) {
             return definition.name;
         });
-        let previous = document.getElementById('test_heatmap');
+        let previous = document.getElementById('heatmap_view');
         if (previous && previous.swac_comp)
             previous.swac_comp.delete();
-        window.test_heatmap_options.attributeOrder = ['TS', 'ts_datetime', attribute];
-        window.test_heatmap_options.attrVisibility = [{hide: availableAttributes.concat(['ts_date', 'ts_time', 'ts_day']).filter(function (name) {
+        window.heatmap_view_options.attributeOrder = ['TS', 'ts_datetime', attribute];
+        window.heatmap_view_options.attrVisibility = [{hide: availableAttributes.concat(['ts_date', 'ts_time', 'ts_day']).filter(function (name) {
             return name !== attribute && name !== 'TS' && name !== 'ts_datetime';
         })}];
         let requestor = document.createElement('div');
-        requestor.id = 'test_heatmap';
+        requestor.id = 'heatmap_view';
         requestor.setAttribute('swa', 'Heatmap FROM ' + collection);
         result.replaceChildren(requestor);
-        await new ViewHandler().load(requestor);
+        let loading = document.querySelector('.heatmap_loading');
+        loading.hidden = false;
+        try {
+            await new ViewHandler().load(requestor);
+        } finally {
+            loading.hidden = true;
+        }
         // Selection may have changed while the heatmap was loading
-        result.hidden = collection !== getTestSelection().collection
-                || attribute !== getTestSelection().attribute;
+        result.hidden = collection !== getHeatmapSelection().collection
+                || attribute !== getHeatmapSelection().attribute;
     }).catch(function (error) {
         console.error('Heatmap could not load the selected data.', error);
     });
 }
 
-document.addEventListener('swac_test_source_dataselect_changed', updateTestHeatmap);
+document.addEventListener('swac_heatmap_source_dataselect_changed', updateHeatmap);
 
 function formatDuration(milliseconds) {
     let totalSeconds = Math.round(milliseconds / 1000);

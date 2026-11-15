@@ -713,9 +713,9 @@
                         },
                         {
                             "id": 704,
-                            "name": "testSeite",
+                            "name": "menu_data_analysis_heatmap",
                             "rfrom": "*",
-                            "rto": "analysis/testSeite.html",
+                            "rto": "analysis/heatmap.html",
                             "parent": 700,
                             "active": true
                         },
