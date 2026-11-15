@@ -1,5 +1,6 @@
 import DataAggregation from '/SWAC/swac/DataAggregation.js?ver=17.08.2026.9';
 import TableExport from '/SWAC/swac/TableExport.js?ver=17.08.2026.9';
+import Heatmap from '/SWAC/swac/components/Heatmap/Heatmap.js';
 
 // Project specific comparison settings.
 var dataCompareOptions = {
@@ -11,11 +12,6 @@ var dataCompareOptions = {
     sourceSize: 5000,
     excludedAttributes: ['id', 'oo_id', 'ts', 'measurement_name', 'measurement_process', 'pos', 'pos_accuracy', 'pos_altitude', 'pos_altitude_accuracy', 'pos_heading', 'pos_speed']
     
-};
-
-window.table_example_options = {
-    borderColor: false,
-    backgroundColor: true
 };
 
 var compareState = {
@@ -76,6 +72,7 @@ function setStatus(message) {
 }
 
 function clearResult() {
+    Heatmap.clear(document.querySelector('.station_compare_result'));
     document.querySelector('.station_compare_result').innerHTML = '';
     if (compareState.chart) {
         compareState.chart.destroy();
@@ -170,9 +167,13 @@ function getStationData(collection, selection) {
 
 
 
-function renderHeatmap(rows) {
-
-
+function renderHeatmap(comparison) {
+    Heatmap.render(document.querySelector('.station_compare_result'), comparison, {
+        timeAttribute: dataCompareOptions.timeAttr
+    }).catch(function (error) {
+        console.error('Heatmap could not be displayed.', error);
+        setStatus('Heatmap could not be displayed.');
+    });
 }
 
 
@@ -869,7 +870,7 @@ function renderComparison() {
 } else if (tempStationCompareMode == 'table') {
     renderTable(rows);
 } else if (tempStationCompareMode == 'heatmap') {
-    renderHeatmap(rows);
+    renderHeatmap(comparison);
 } else {
     renderSamplingRate(rows);
 }

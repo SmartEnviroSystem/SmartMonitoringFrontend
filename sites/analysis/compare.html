@@ -8,11 +8,12 @@
         <link rel="icon" type="image/png" sizes="16x16" href="../../files/icons/16x16.png">
         <link rel="stylesheet" href="../../css/global.css" />
         
-        <script src="../../customisations/data/exampledata.js"></script>
         <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css" />
         <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
         <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
         <script src="/SWAC/swac/swac.js" type="module"></script>
+
+        
 
 
         <script src="/SWAC/swac/components/Charts/libs/chartjs/Chart.min.js"></script>
@@ -24,9 +25,14 @@
         <link rel="stylesheet" href="../../customisations/analysis/compare.css" />
     </head>
     <body>
+
+
+
         <nav id="main_navigation" class="swac_navigation_head" swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC"></nav>
         <div id="userform" swa="User"></div>
         <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
+
+
 
         <div class="section">
             <article class="uk-article">
@@ -93,7 +99,6 @@
                         <div class="station_compare_stationlist"></div>
                         <button type="button" class="uk-button uk-button-default uk-button-small station_compare_add" swac_lang="data_compare_add_collection">Add collection</button>
 
-                      <div id="table_example" swa="Datadescription FROM exampleData"></div>
 
 
                     </div>
@@ -132,7 +137,10 @@
                 </div>
 
                 <div class="station_compare_status" aria-live="polite"></div>
-                <div class="station_compare_result"></div>
+                <div class="station_compare_result">
+
+
+                </div>
             </article>
         </div>
         <div id="favs" swa="Favourites"></div>
