@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <title>testSeite</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" sizes="32x32" href="../../files/icons/32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../../files/icons/16x16.png">
+        <link rel="stylesheet" href="../../css/global.css" />
+        <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css" />
+        <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
+        <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
+        <script src="../../js/analysis/testSeite.js" type="module"></script>
+        <script src="/SWAC/swac/swac.js" type="module"></script>
+        <link rel="stylesheet" href="../../customisations/global.css" />
+    </head>
+    <body>
+        <nav id="main_navigation" class="swac_navigation_head" swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC"></nav>
+        <div id="userform" swa="User"></div>
+        <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
+
+        <div class="section">
+            <article class="uk-article">
+                <h1 class="uk-heading-bullet">testSeite</h1>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="test_display">Darstellung</label>
+                    <select id="test_display" class="uk-select">
+                        <option value="heatmap">Heatmap</option>
+                    </select>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="test_table">Tabelle</label>
+                    <select id="test_table" class="uk-select">
+                        <option value="">Tabelle auswählen</option>
+                    </select>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="test_value">Wert</label>
+                    <select id="test_value" class="uk-select" disabled>
+                        <option value="">Wert auswählen</option>
+                    </select>
+                </div>
+                <div id="test_legend" swa="Datadescription TEMPLATE min_median_max"></div>
+                <div id="test_result" hidden>
+                </div>
+            </article>
+        </div>
+
+        <div id="favs" swa="Favourites"></div>
+    </body>
+</html>
