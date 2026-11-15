@@ -742,27 +742,6 @@ function renderChart(comparison) {
     });
 }
 
-function calculateSamplingRate(sets) {
-    let times = sets
-        .map(getTimeValue)
-        .filter(Number.isFinite)
-        .sort((a, b) => a - b);
-
-    if (times.length < 2)
-        return null;
-
-    let differences = [];
-
-    for (let i = 1; i < times.length; i++) {
-        let diff = times[i] - times[i - 1];
-
-        if (diff > 0)
-            differences.push(diff);
-    }
-
-    return differences.length ? getMedian(differences) : null;
-}
-
 function renderComparison() {
     clearResult();
     let comparison = buildComparisonData();
