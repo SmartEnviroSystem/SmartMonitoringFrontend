@@ -22,16 +22,25 @@ window.test_heatmap_options = {
     }
 };
 window.test_legend_options = {formatAttributeBorders: false};
-let availableAttributes = [];
+window.test_source_options = {attributeRequired: true};
+
+function getTestSelection() {
+    let source = document.getElementById('test_source').swac_comp;
+    return (source && source.getSelection && source.getSelection()) || {};
+}
+
 let heatmapUpdate = Promise.resolve();
 function updateTestHeatmap() {
     let result = document.getElementById('test_result');
     result.hidden = true;
     heatmapUpdate = heatmapUpdate.then(async function () {
-        let collection = document.getElementById('test_table').value;
-        let attribute = document.getElementById('test_value').value;
+        let collection = getTestSelection().collection;
+        let attribute = getTestSelection().attribute;
         if (!collection || !attribute)
             return;
+        let availableAttributes = document.getElementById('test_source').swac_comp.getAttributes().map(function (definition) {
+            return definition.name;
+        });
         let previous = document.getElementById('test_heatmap');
         if (previous && previous.swac_comp)
             previous.swac_comp.delete();
@@ -44,55 +53,15 @@ function updateTestHeatmap() {
         requestor.setAttribute('swa', 'Heatmap FROM ' + collection);
         result.replaceChildren(requestor);
         await new ViewHandler().load(requestor);
-        result.hidden = collection !== document.getElementById('test_table').value
-                || attribute !== document.getElementById('test_value').value;
+        // Selection may have changed while the heatmap was loading
+        result.hidden = collection !== getTestSelection().collection
+                || attribute !== getTestSelection().attribute;
     }).catch(function (error) {
         console.error('Heatmap could not load the selected data.', error);
     });
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    let tables = document.getElementById('test_table');
-    let values = document.getElementById('test_value');
-    function loadTables() {
-        window.swac.Model.load({fromName: 'tbl_observedobject',
-            fromWheres: {filter: 'data_collection,nis', order: 'name,ASC'}
-        }).then(function (source) {
-            let sets = source.getSets ? source.getSets() : source;
-            for (let set of sets) {
-                if (set && set.data_collection)
-                    tables.add(new Option(set.name || set.data_collection, set.data_collection));
-            }
-        }).catch(function (error) {
-            console.error(error);
-            tables.options[0].text = 'Tabellen konnten nicht geladen werden';
-        });
-    }
-    tables.addEventListener('change', async function () {
-        document.getElementById('test_result').hidden = true;
-        values.length = 0;
-        values.add(new Option('Wert auswählen', ''));
-        values.disabled = true;
-        let collection = tables.value;
-        if (!collection) return;
-        try {
-            let definitions = await window.swac.Model.getValueDefinitions({fromName: collection});
-            if (tables.value !== collection) return;
-            availableAttributes = (definitions || []).map(function (definition) { return definition.name; });
-            for (let definition of definitions || []) {
-                if (!['id', 'oo_id', 'ts'].includes(definition.name))
-                    values.add(new Option(definition.name, definition.name));
-            }
-            values.disabled = values.options.length < 2;
-        } catch (error) {
-            if (tables.value !== collection) return;
-            console.error(error);
-            values.options[0].text = 'Werte konnten nicht geladen werden';
-        }
-    });
-    values.addEventListener('change', updateTestHeatmap);
-    document.addEventListener('swac_core_loaded', loadTables, {once: true});
-});
+document.addEventListener('swac_test_source_dataselect_changed', updateTestHeatmap);
 
 function formatDuration(milliseconds) {
     let totalSeconds = Math.round(milliseconds / 1000);

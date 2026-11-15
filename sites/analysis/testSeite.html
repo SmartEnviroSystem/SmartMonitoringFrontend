@@ -22,23 +22,15 @@
         <div class="section">
             <article class="uk-article">
                 <h1 class="uk-heading-bullet">testSeite</h1>
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="test_display">Darstellung</label>
-                    <select id="test_display" class="uk-select">
-                        <option value="heatmap">Heatmap</option>
-                    </select>
-                </div>
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="test_table">Tabelle</label>
-                    <select id="test_table" class="uk-select">
-                        <option value="">Tabelle auswählen</option>
-                    </select>
-                </div>
-                <div class="uk-margin">
-                    <label class="uk-form-label" for="test_value">Wert</label>
-                    <select id="test_value" class="uk-select" disabled>
-                        <option value="">Wert auswählen</option>
-                    </select>
+                <!-- One row: display a third, Dataselect (device and measured value, see SWAC component) the rest -->
+                <div class="uk-grid-small uk-margin" uk-grid>
+                    <div class="uk-width-1-3@s">
+                        <label class="uk-form-label" for="test_display">Darstellung</label>
+                        <select id="test_display" class="uk-select">
+                            <option value="heatmap">Heatmap</option>
+                        </select>
+                    </div>
+                    <div id="test_source" class="uk-width-expand@s" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC"></div>
                 </div>
                 <div id="test_legend" swa="Datadescription TEMPLATE min_median_max"></div>
                 <div id="test_result" hidden>
