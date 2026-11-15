@@ -742,34 +742,7 @@ function renderChart(comparison) {
     });
 }
 
-/*
 function calculateSamplingRate(sets) {
-    let times = sets
-        .map(getTimeValue)
-        .filter(Number.isFinite)
-        .sort((a, b) => a - b);
-
-    if (times.length < 2)
-        return null;
-
-    let differences = [];
-
-    for (let i = 1; i < times.length; i++) {
-        let diff = times[i] - times[i - 1];
-
-        if (diff > 0)
-            differences.push(diff);
-    }
-
-    if (differences.length === 0)
-        return null;
-
-    return getMedian(differences);
-}
-
-*/ 
-
-function calculateSamplingRate1(sets) {
     let times = sets
         .map(getTimeValue)
         .filter(Number.isFinite)
@@ -792,16 +765,8 @@ function calculateSamplingRate1(sets) {
 
 function renderSamplingRate(rows) {
 	clearResult();
-	/*
-	let samplingRates = compareState.results.map(function (result) {
-    		return {
-        		collection: result.selection.collection,
-        		interval: calculateSamplingRate(result.rawSets)
-    		};
-	});
-	*/
- 	let samplingRates1 = compareState.results.map(function (result) {
-        	return calculateSamplingRate(result.rawSets);
+ 	let samplingRates = compareState.results.map(function (result) {
+        	return calculateSamplingRate(result.sets);
     	});
 	alert("Sampling");
 	let html = '<h1>Sampling Rate</h1>'
@@ -817,7 +782,7 @@ function renderSamplingRate(rows) {
             	return '<td class="station_compare_value">' + escapeHtml(displayValue) + '</td>';
         }).join('') ;
 	 
-	 for (let rate of samplingRates1) {
+	 for (let rate of samplingRates) {
             let displayRate = rate === null
                 ? '-'
                 : formatNumber(rate / 1000) + ' s';
