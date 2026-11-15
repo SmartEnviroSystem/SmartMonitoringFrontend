@@ -39,8 +39,6 @@
                 <h1 class="uk-heading-bullet" swac_lang="data_compare_headline">Data comparison</h1>
                 <p class="uk-article-meta" swac_lang="data_compare_desc">Compare data from multiple collections.</p>
 
-                <div id="testtesttest" swa="DataSelect FROM tbl_observedobject"></div>
-
                 <div id="station_compare" class="station_compare">
                     <div class="station_compare_togglebar uk-margin-small-bottom">
                         <button class="uk-button uk-button-default uk-button-small" type="button" uk-toggle="target: #station_compare_settings">
@@ -54,7 +52,6 @@
                             <select id="station_compare_mode" class="uk-select">
                                 <option value="table" swac_lang="data_compare_table">Table</option>
                                 <option value="chart" swac_lang="data_compare_chart">Diagram</option>
-                                <option value="heatmap" swac_lang="data_compare_heatmap">Heatmap</option>
 				                <option value="sampling" swac_lang="data_compare_samplung">Sampling-Rate</option> 
                             </select>
                         </label>
@@ -137,6 +134,10 @@
                 </div>
 
                 <div class="station_compare_status" aria-live="polite"></div>
+                <div id="station_compare_heatmap_view" hidden>
+                    <div id="station_compare_legend" swa="Datadescription FROM compareHeatmapLegend"></div>
+                    <div id="station_compare_heatmap" swa="Heatmap FROM exampledata_geotimeseries_1week"></div>
+                </div>
                 <div class="station_compare_result">
 
 
