@@ -1,4 +1,5 @@
 import ViewHandler from '/SWAC/swac/ViewHandler.js';
+import Model from '/SWAC/swac/Model.js';
 
 window.heatmap_view_options = {
     datadescription: 'heatmap_legend',
@@ -38,7 +39,8 @@ function updateHeatmap() {
         let attribute = getHeatmapSelection().attribute;
         if (!collection || !attribute)
             return;
-        let availableAttributes = document.getElementById('heatmap_source').swac_comp.getAttributes().map(function (definition) {
+        let definitions = await Model.getValueDefinitions({fromName: collection});
+        let availableAttributes = definitions.map(function (definition) {
             return definition.name;
         });
         let previous = document.getElementById('heatmap_view');
