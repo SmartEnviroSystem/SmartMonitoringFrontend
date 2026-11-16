@@ -3,10 +3,27 @@ import ViewHandler from '/SWAC/swac/ViewHandler.js';
 import SWAC from '/SWAC/swac/swac.js';
 */
 
-window['oo_change_options'] = {
-    selectedParam: 'data_collection',
-    paramsFromSet: ['id', 'data_collection']
+// Only the device is needed, the chart shows the intervals of its data table
+window['samplingrate_source_options'] = {
+    showAttribute: false
 };
+
+// The chart reads its table from the URL, so a new device reloads the page with it
+document.addEventListener('swac_samplingrate_source_dataselect_changed', function (evt) {
+    let selection = evt.detail.selection;
+    let params = new URLSearchParams(window.location.search);
+    let collection = selection ? selection.collection : null;
+    if (collection === params.get('data_collection'))
+        return;
+    if (selection) {
+        params.set('data_collection', collection);
+        params.set('oo_id', selection.id);
+    } else {
+        params.delete('data_collection');
+        params.delete('oo_id');
+    }
+    window.location.search = params.toString();
+});
 
 window['samplingrate_chart_options'] = {
     fromName: new URLSearchParams(window.location.search).get('data_collection'),

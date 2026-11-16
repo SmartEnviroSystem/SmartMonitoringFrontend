@@ -11,7 +11,6 @@
         <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
         <script src="/SWAC/swac/swac.js" type="module"></script>
         <script src="../../js/analysis/samplingrate.js"></script>
-        <script src="../../js/general/oo_change.js"></script>
         <link rel="stylesheet" href="../../customisations/global.css">
     </head>
     <body>
@@ -20,7 +19,8 @@
         <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
         <article class="uk-article">
             <h1>Samplingrate</h1>
-            <div id="oo_change" swa="Select FROM tbl_observedobject WHERE filter=data_collection,nis"></div>
+            <!-- Only the device (its data table) is selected, see SWAC component Dataselect -->
+            <div id="samplingrate_source" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC"></div>
             <p id="samplingrate_status" role="status"></p>
             <div id="samplingrate_chart" swa="Charts WHERE order=ts,ASC"></div>
         </article>
