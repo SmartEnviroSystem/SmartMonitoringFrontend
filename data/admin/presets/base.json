@@ -720,6 +720,14 @@
                             "active": true
                         },
                         {
+                            "id": 705,
+                            "name": "menu_data_analysis_samplingrate",
+                            "rfrom": "*",
+                            "rto": "analysis/samplingrate.html",
+                            "parent": 700,
+                            "active": true
+                        },
+                        {
                             "id": 800,
                             "name": "menu_datamap",
                             "rfrom": "*",
