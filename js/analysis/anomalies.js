@@ -3,6 +3,7 @@
 // SWAC component Dataselect, its options are set in anomalies.html.
 var anomaliesOptions = {
     sourceId: 'anomalies_source',
+    checksId: 'anomalies_checks',
     storage: 'smartmonitoring',
     smartdataUrl: '/SmartData',
     lyserUrl: '/SmartDataLyser/smartdatalyser/anomaly/',
@@ -61,14 +62,69 @@ function getSource() {
 }
 
 /**
- * Enables parameter inputs only for active checks.
+ * Gets the SWAC Select component listing the checks once SWAC has loaded it.
+ */
+function getChecksComponent() {
+    let comp = document.getElementById(anomaliesOptions.checksId).swac_comp;
+    return comp && comp.getInputs ? comp : null;
+}
+
+/**
+ * Gets the checks offered by the Select component, by the id of their option.
+ *
+ * @returns {Object} Check names (rateofchange, ...) by option id
+ */
+function getCheckOptions() {
+    let checks = {};
+    let comp = getChecksComponent();
+    if (!comp)
+        return checks;
+    for (let source in comp.getData()) {
+        for (let set of comp.getData()[source].getSets()) {
+            if (set)
+                checks[set.id] = set.check;
+        }
+    }
+    return checks;
+}
+
+/**
+ * @returns {String[]} Names of the selected checks, e.g. ['rateofchange', 'flatline']
+ */
+function getSelectedChecks() {
+    let comp = getChecksComponent();
+    if (!comp)
+        return [];
+    let checks = getCheckOptions();
+    return comp.getInputs().map(input => checks[input.value]).filter(Boolean);
+}
+
+function selectAllChecks() {
+    let comp = getChecksComponent();
+    if (!comp)
+        return;
+    // The option names are translation keys, mark them so SWAC translates them like swac_lang in HTML
+    for (let bp of comp.requestor.querySelectorAll('label swac-bp[attrname="name"]'))
+        bp.setAttribute('swac_lang', bp.textContent);
+    window.swac.lang.translateAll(comp.requestor);
+    let inputs = {};
+    for (let id in getCheckOptions())
+        inputs[id] = true;
+    comp.setInputs(inputs);
+    updateCheckParams();
+}
+
+/**
+ * Shows the number of selected checks and the parameters of the selected checks only.
  */
 function updateCheckParams() {
-    for (let check of document.querySelectorAll('.anomalies_check')) {
-        let params = document.querySelector('.anomalies_params[data-check="' + check.value + '"]');
-        params.style.opacity = check.checked ? '' : '0.4';
+    let selected = getSelectedChecks();
+    document.querySelector('.anomalies_checks_count').textContent = selected.length;
+    for (let params of document.querySelectorAll('.anomalies_params')) {
+        let active = selected.includes(params.dataset.check);
+        params.hidden = !active;
         for (let input of params.querySelectorAll('input'))
-            input.disabled = !check.checked;
+            input.disabled = !active;
     }
 }
 
@@ -93,9 +149,9 @@ function buildRequests() {
         common.set('measurefreq', measurefreq);
 
     let requests = [];
-    for (let check of document.querySelectorAll('.anomalies_check:checked')) {
+    for (let check of getSelectedChecks()) {
         let params = new URLSearchParams(common);
-        let paramInputs = document.querySelectorAll('.anomalies_params[data-check="' + check.value + '"] input');
+        let paramInputs = document.querySelectorAll('.anomalies_params[data-check="' + check + '"] input');
         for (let input of paramInputs) {
             if (input.value === '')
                 continue;
@@ -104,8 +160,8 @@ function buildRequests() {
             params.set(input.name, value);
         }
         requests.push({
-            check: check.value,
-            url: anomaliesOptions.lyserUrl + check.value + '?' + params.toString()
+            check: check,
+            url: anomaliesOptions.lyserUrl + check + '?' + params.toString()
         });
     }
     return requests;
@@ -120,7 +176,7 @@ function validateForm() {
     if (!source.timeAttr)
         return getAnomaliesText('data_anomalies_no_timeattr', 'Please select the time attribute.');
     // The period is checked by Dataselect, the browser blocks the submit if it is invalid
-    if (document.querySelectorAll('.anomalies_check:checked').length === 0)
+    if (getSelectedChecks().length === 0)
         return getAnomaliesText('data_anomalies_error_check', 'Please select at least one check.');
     return null;
 }
@@ -404,7 +460,7 @@ function initialise() {
             let comp = getSourceComponent();
             if (comp)
                 comp.setSelection('');
-            updateCheckParams();
+            selectAllChecks();
             setStatus('');
             clearResult();
         }, 0);
@@ -414,8 +470,12 @@ function initialise() {
         setStatus('');
         clearResult();
     });
-    for (let check of document.querySelectorAll('.anomalies_check'))
-        check.addEventListener('change', updateCheckParams);
+    // All checks are selected once the Select component has loaded its options
+    if (window.swac && window.swac.loadedComponents && window.swac.loadedComponents.has(anomaliesOptions.checksId))
+        selectAllChecks();
+    else
+        document.addEventListener('swac_' + anomaliesOptions.checksId + '_complete', selectAllChecks, {once: true});
+    document.addEventListener('swac_' + anomaliesOptions.checksId + '_selection_changed', updateCheckParams);
 }
 
 initialise();
