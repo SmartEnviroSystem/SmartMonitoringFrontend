@@ -24,6 +24,7 @@ ar_app_en = {
     menu_data_analysis_list: 'Analysis List',
     menu_data_analysis_compare: 'Data Comparison',
     menu_data_analysis_anomalies: 'Anomalies',
+    menu_data_analysis_heatmap: 'Heatmap',
     menu_data_pipelines: 'Data Pipelines',
     menu_datamap: 'Data Map',
 
@@ -170,6 +171,9 @@ ar_app_en = {
     data_compare_value: 'Value',
     data_compare_interval_error: 'The measurement interval could not be determined.',
     data_compare_export_empty: 'No comparison data available for export.',
+    data_heatmap_title: 'Data > Heatmap',
+    data_heatmap_headline: 'Heatmap',
+    data_heatmap_loading: 'Loading heatmap ...',
     data_anomalies_title: 'Data > Anomalies',
     data_anomalies_headline: 'Anomaly detection',
     data_anomalies_desc: 'Finds values that change too fast, stay constant for too long or jump between extremes.',

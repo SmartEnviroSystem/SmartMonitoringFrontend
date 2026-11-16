@@ -712,6 +712,14 @@
                             "active": false
                         },
                         {
+                            "id": 704,
+                            "name": "menu_data_analysis_heatmap",
+                            "rfrom": "*",
+                            "rto": "analysis/heatmap.html",
+                            "parent": 700,
+                            "active": true
+                        },
+                        {
                             "id": 800,
                             "name": "menu_datamap",
                             "rfrom": "*",

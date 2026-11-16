@@ -24,6 +24,7 @@ var app_de = {
     menu_data_analysis_list: 'Analyseliste',
     menu_data_analysis_compare: 'Datenvergleich',
     menu_data_analysis_anomalies: 'Anomalien',
+    menu_data_analysis_heatmap: 'Heatmap',
     menu_data_pipelines: 'Datenpipelines',
     menu_datamap: 'Datenkarte',
     
@@ -167,6 +168,9 @@ var app_de = {
     data_compare_value: 'Wert',
     data_compare_interval_error: 'Das Messintervall konnte nicht bestimmt werden.',
     data_compare_export_empty: 'Es sind keine Vergleichsdaten zum Exportieren vorhanden.',
+    data_heatmap_title: 'Daten > Heatmap',
+    data_heatmap_headline: 'Heatmap',
+    data_heatmap_loading: 'Heatmap wird geladen ...',
     data_anomalies_title: 'Daten > Anomalien',
     data_anomalies_headline: 'Anomalie-Erkennung',
     data_anomalies_desc: 'Findet Werte, die sich zu schnell ändern, zu lange konstant bleiben oder zwischen Extremen springen.',
