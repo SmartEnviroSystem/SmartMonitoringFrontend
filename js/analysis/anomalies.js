@@ -30,7 +30,9 @@ var anomaliesParameterLabels = {
 };
 
 var anomaliesState = {
-    chart: null
+    chart: null,
+    // Index of the chart dataset showing the anomalies of each check
+    datasetIndex: {}
 };
 
 function getAnomaliesText(key, fallback) {
@@ -199,8 +201,45 @@ function renderRequests(requests) {
     }
 }
 
-function formatNumber(value) {
-    return Number(value).toLocaleString(undefined, {maximumFractionDigits: 3});
+function formatNumber(value, digits = 3) {
+    return Number(value).toLocaleString(undefined, {maximumFractionDigits: digits});
+}
+
+/**
+ * Formats a period, the date is shown once if both ends are on the same day.
+ */
+function formatPeriod(from, until) {
+    let start = new Date(from);
+    let end = new Date(until);
+    let endText = start.toDateString() === end.toDateString()
+            ? end.toLocaleTimeString(undefined, {timeStyle: 'short'}) : formatTime(until);
+    return formatTime(from) + ' – ' + endText;
+}
+
+function formatDuration(from, until) {
+    let minutes = Math.round((new Date(until) - new Date(from)) / 60000);
+    if (minutes < 60)
+        return minutes + ' min';
+    if (minutes < 48 * 60)
+        return formatNumber(minutes / 60, 1) + ' h';
+    return formatNumber(minutes / 1440, 1) + ' d';
+}
+
+/**
+ * Describes how strong an anomaly is, using the indicator of its check.
+ *
+ * @param {Object} anomaly Anomaly from SmartDataLyser
+ * @param {Object} parameters Parameters the check used
+ */
+function formatStrength(anomaly, parameters) {
+    let label = getAnomaliesText('data_anomalies_indicator_' + anomaly.type, '');
+    if (anomaly.type === 'rateofchange') {
+        let factor = anomaly.indicator / parameters.maxdelta;
+        return formatNumber(anomaly.indicator, 2) + ' /min (' + formatNumber(factor, factor >= 10 ? 0 : 1) + label + ')';
+    }
+    if (anomaly.type === 'flatline')
+        return label + ' ' + formatNumber(anomaly.indicator);
+    return formatNumber(anomaly.indicator) + ' ' + label;
 }
 
 function formatTime(value) {
@@ -214,6 +253,8 @@ function clearResult() {
         anomaliesState.chart = null;
     }
     document.querySelector('.anomalies_result').hidden = true;
+    document.querySelector('.anomalies_zoomreset').hidden = true;
+    document.querySelector('.anomalies_parameters').innerHTML = '';
     document.querySelector('.anomalies_summary').innerHTML = '';
     document.querySelector('.anomalies_table').innerHTML = '';
     document.querySelector('.anomalies_requests').innerHTML = '';
@@ -309,7 +350,11 @@ function renderSummary(results) {
             text.textContent = getAnomaliesText('data_anomalies_check_error', 'The check failed') + ' - ' + checkResult.error;
         } else {
             text.textContent = getAnomaliesText('data_anomalies_findings', 'Findings') + ' '
-                    + checkResult.result.anomalies.length + ' · ' + formatParameters(checkResult.result.parameters);
+                    + checkResult.result.anomalies.length;
+            // The parameters are only needed for checking, they are shown in the technical details
+            let paramItem = document.createElement('li');
+            paramItem.append(name.cloneNode(true), formatParameters(checkResult.result.parameters));
+            document.querySelector('.anomalies_parameters').appendChild(paramItem);
         }
         item.appendChild(text);
         list.appendChild(item);
@@ -318,9 +363,12 @@ function renderSummary(results) {
 
 function renderTable(results) {
     let anomalies = [];
+    let parameters = {};
     for (let checkResult of results) {
-        if (checkResult.result)
+        if (checkResult.result) {
             anomalies.push(...checkResult.result.anomalies);
+            parameters[checkResult.check] = checkResult.result.parameters;
+        }
     }
     anomalies.sort(function (first, second) {
         return first.from.localeCompare(second.from);
@@ -331,12 +379,10 @@ function renderTable(results) {
         let row = document.createElement('tr');
         let cells = [
             getAnomaliesText('data_anomalies_' + anomaly.type, anomaly.type),
-            formatTime(anomaly.from),
-            formatTime(anomaly.until),
-            anomaly.count,
-            formatNumber(anomaly.min),
-            formatNumber(anomaly.max),
-            getAnomaliesText('data_anomalies_indicator_' + anomaly.type, '') + ' ' + formatNumber(anomaly.indicator)
+            formatPeriod(anomaly.from, anomaly.until),
+            formatDuration(anomaly.from, anomaly.until),
+            anomaly.min === anomaly.max ? formatNumber(anomaly.min) : formatNumber(anomaly.min) + ' – ' + formatNumber(anomaly.max),
+            formatStrength(anomaly, parameters[anomaly.type])
         ];
         for (let value of cells) {
             let cell = document.createElement('td');
@@ -344,12 +390,24 @@ function renderTable(results) {
             row.appendChild(cell);
         }
         row.firstChild.style.color = anomaliesOptions.checkColors[anomaly.type];
+        // Hover highlights the points in the chart, a click (focus) keeps them highlighted
+        row.tabIndex = 0;
+        row.style.cursor = 'pointer';
+        row.addEventListener('mouseenter', () => highlightAnomaly(anomaly));
+        row.addEventListener('focus', () => highlightAnomaly(anomaly));
+        row.addEventListener('mouseleave', () => highlightAnomaly(document.activeElement === row ? anomaly : null));
+        row.addEventListener('blur', () => highlightAnomaly(null));
+        row.addEventListener('click', () => zoomToAnomaly(anomaly));
+        row.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter')
+                zoomToAnomaly(anomaly);
+        });
         body.appendChild(row);
     }
     if (anomalies.length === 0) {
         let row = document.createElement('tr');
         let cell = document.createElement('td');
-        cell.colSpan = 7;
+        cell.colSpan = 5;
         cell.textContent = getAnomaliesText('data_anomalies_none', 'No anomalies found.');
         row.appendChild(cell);
         body.appendChild(row);
@@ -369,6 +427,7 @@ function renderChart(series, results) {
     }
     chartElem.hidden = false;
 
+    anomaliesState.datasetIndex = {};
     let datasets = [{
             label: getSource().attribute,
             data: series,
@@ -384,6 +443,7 @@ function renderChart(series, results) {
             return {from: new Date(anomaly.from).getTime(), until: new Date(anomaly.until).getTime()};
         });
         let color = anomaliesOptions.checkColors[checkResult.check];
+        anomaliesState.datasetIndex[checkResult.check] = datasets.length;
         datasets.push({
             label: getAnomaliesText('data_anomalies_' + checkResult.check, checkResult.check),
             data: series.filter(function (point) {
@@ -392,7 +452,11 @@ function renderChart(series, results) {
             borderColor: color,
             backgroundColor: color,
             showLine: false,
-            pointRadius: 3
+            pointRadius: 3,
+            // Size of the points highlighted from the table
+            pointHoverRadius: 8,
+            pointHoverBorderWidth: 3,
+            pointHoverBorderColor: '#000'
         });
     }
 
@@ -414,6 +478,55 @@ function renderChart(series, results) {
             }
         }
     });
+}
+
+/**
+ * Lets the chart points of one anomaly light up.
+ *
+ * @param {Object} anomaly Anomaly from SmartDataLyser, null removes the highlight
+ */
+function highlightAnomaly(anomaly) {
+    let chart = anomaliesState.chart;
+    if (!chart)
+        return;
+    let elements = [];
+    let datasetIndex = anomaly ? anomaliesState.datasetIndex[anomaly.type] : undefined;
+    if (datasetIndex !== undefined) {
+        let from = new Date(anomaly.from).getTime();
+        let until = new Date(anomaly.until).getTime();
+        chart.data.datasets[datasetIndex].data.forEach(function (point, index) {
+            if (point.x >= from && point.x <= until)
+                elements.push({datasetIndex: datasetIndex, index: index});
+        });
+    }
+    chart.setActiveElements(elements);
+    chart.update();
+}
+
+/**
+ * Zooms the chart to one anomaly with some context around it.
+ */
+function zoomToAnomaly(anomaly) {
+    let chart = anomaliesState.chart;
+    if (!chart)
+        return;
+    let from = new Date(anomaly.from).getTime();
+    let until = new Date(anomaly.until).getTime();
+    let padding = Math.max(until - from, 3 * 3600 * 1000);
+    chart.options.scales.x.min = from - padding;
+    chart.options.scales.x.max = until + padding;
+    chart.update();
+    document.querySelector('.anomalies_zoomreset').hidden = false;
+}
+
+function resetZoom() {
+    let chart = anomaliesState.chart;
+    if (chart) {
+        delete chart.options.scales.x.min;
+        delete chart.options.scales.x.max;
+        chart.update();
+    }
+    document.querySelector('.anomalies_zoomreset').hidden = true;
 }
 
 function executeAnalysis(event) {
@@ -454,6 +567,7 @@ function initialise() {
 
     let form = document.querySelector('#anomalies_form');
     form.addEventListener('submit', executeAnalysis);
+    document.querySelector('.anomalies_zoomreset').addEventListener('click', resetZoom);
     form.addEventListener('reset', function () {
         // Wait until the browser has reset the inputs (the period goes back to the Dataselect preset)
         setTimeout(function () {

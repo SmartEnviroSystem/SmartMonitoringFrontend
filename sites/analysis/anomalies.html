@@ -123,17 +123,16 @@
                     <h3 swac_lang="data_anomalies_result">Result</h3>
                     <ul class="anomalies_summary uk-list uk-text-small"></ul>
                     <div class="anomalies_chart uk-margin" style="position: relative; height: 360px;"><canvas></canvas></div>
+                    <button type="button" class="anomalies_zoomreset uk-button uk-button-default uk-button-small" swac_lang="data_anomalies_zoomreset" hidden>Show whole period</button>
                     <div class="uk-overflow-auto">
                         <table class="uk-table uk-table-small uk-table-divider uk-table-hover">
                             <thead>
                                 <tr>
                                     <th swac_lang="data_anomalies_col_check">Check</th>
-                                    <th swac_lang="data_anomalies_col_from">From</th>
-                                    <th swac_lang="data_anomalies_col_until">Till</th>
-                                    <th swac_lang="data_anomalies_col_count">Values</th>
-                                    <th swac_lang="data_anomalies_col_min">Min</th>
-                                    <th swac_lang="data_anomalies_col_max">Max</th>
-                                    <th swac_lang="data_anomalies_col_indicator">Key figure</th>
+                                    <th swac_lang="data_anomalies_col_period">Period</th>
+                                    <th swac_lang="data_anomalies_col_duration">Duration</th>
+                                    <th swac_lang="data_anomalies_col_values">Values</th>
+                                    <th swac_lang="data_anomalies_col_strength">Strength</th>
                                 </tr>
                             </thead>
                             <tbody class="anomalies_table"></tbody>
@@ -143,6 +142,8 @@
                         <li>
                             <a class="uk-accordion-title uk-text-small" href="#" swac_lang="data_anomalies_details">Technical details</a>
                             <div class="uk-accordion-content">
+                                <p class="uk-text-meta" swac_lang="data_anomalies_parameters">Parameters used</p>
+                                <ul class="anomalies_parameters uk-list uk-text-small"></ul>
                                 <p class="uk-text-meta" swac_lang="data_anomalies_requests">Requests to SmartDataLyser</p>
                                 <ul class="anomalies_requests uk-list uk-list-divider uk-text-small uk-text-break"></ul>
                             </div>
