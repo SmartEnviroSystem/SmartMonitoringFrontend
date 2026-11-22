@@ -20,6 +20,11 @@
         <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
         <article class="uk-article">
             <h1>Samplingrate</h1>
+	    <p>Zeigt die Messabstände der einzelnen Zeitmessungen an.</p>
+	    <p>Die Anzeige zeigt die Messabstände in Sekunden an.</p>
+	    <h2>Information</h2>
+	    <p>Je höher oder tiefer ein Punkt vom voherigem Messpunkt entfernt ist, desto weiter oder näher ist dieser vom voherigem entfernt.</p>
+	    <p>Mehrere Punkte in einer Linie deuten auf eine gleichmäßige Messung hin, die in gleichen Abständen erfolgt ist.</p>
             <div id="oo_change" swa="Select FROM tbl_observedobject WHERE filter=data_collection,nis"></div>
             <p id="samplingrate_status" role="status"></p>
             <div id="samplingrate_chart" swa="Charts WHERE order=ts,ASC"></div>
