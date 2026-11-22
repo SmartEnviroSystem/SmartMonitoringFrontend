@@ -1,0 +1,110 @@
+
+.device-selector {
+    position: relative;
+    width: 100%;
+    font-family: inherit;
+}
+
+.device-trigger {
+    display: block;
+    width: 100%;
+    min-height: 43px;
+    position: relative;
+    text-align: left;
+    border: 1px solid #b7c7d6;
+    border-radius: 7px;
+    background: white;
+    color: #1d3448;
+    padding: 10px 35px 10px 13px;
+    cursor: pointer;
+}
+
+.device-trigger::after {
+    content: "▾";
+    position: absolute;
+    right: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.device-trigger:hover {
+    border-color: #176b98;
+}
+
+.device-trigger:focus-visible,
+.tree-toggle:focus-visible {
+    outline: 2px solid #176b98;
+    outline-offset: 2px;
+}
+
+.device-menu {
+    position: absolute;
+    z-index: 50;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    max-height: 310px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #b7c7d6;
+    border-radius: 8px;
+    box-shadow: 0 8px 22px #152b3b24;
+    padding: 7px 0;
+}
+
+.device-tree-item {
+    width: 100%;
+}
+
+.device-tree-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 36px;
+    padding-right: 10px;
+}
+
+.device-tree-row:hover {
+    background: #eef5fa;
+}
+
+.tree-toggle {
+    flex: 0 0 24px;
+    border: 0;
+    background: transparent;
+    font-size: 17px;
+    color: #344c62;
+    cursor: pointer;
+}
+
+.tree-toggle:disabled {
+    cursor: default;
+}
+
+.device-tree-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 7px 0;
+}
+
+.device-tree-label input {
+    margin: 0;
+    accent-color: #176b98;
+}
+
+.device-tree-label span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.device-empty {
+    margin: 10px 14px;
+    color: #64748b;
+    font-size: 13px;
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <title swac_lang="data_compare_title">Data &gt; Compare</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" sizes="32x32" href="../../files/icons/32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../../files/icons/16x16.png">
+        <link rel="stylesheet" href="../../css/global.css" />
+
+        <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css" />
+        <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
+        <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
+        <script src="/SWAC/swac/swac.js" type="module"></script>
+
+        <script src="/SWAC/swac/components/Charts/libs/chartjs/Chart.min.js"></script>
+        <script src="/SWAC/swac/components/Charts/libs/chartjs/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+        <script src="../../js/analysis/compare.js" type="module"></script>
+
+        <link rel="stylesheet" href="../../customisations/global.css" />
+        <link rel="stylesheet" href="../../customisations/analysis/compare.css" />
+    </head>
+    <body>
+        <nav id="main_navigation" class="swac_navigation_head" swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC"></nav>
+        <div id="userform" swa="User"></div>
+        <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
+
+        <div class="section">
+            <article class="uk-article">
+                <h1 class="uk-heading-bullet" swac_lang="data_compare_headline">Data comparison</h1>
+                <p class="uk-article-meta" swac_lang="data_compare_desc">Compare data from multiple collections.</p>
+
+                <div id="station_compare" class="station_compare">
+                    <div class="station_compare_togglebar uk-margin-small-bottom">
+                        <button class="uk-button uk-button-default uk-button-small" type="button" uk-toggle="target: #station_compare_settings">
+                            <span uk-icon="icon: settings; ratio: 0.8"></span>
+                            <span swac_lang="data_compare_settings">Setting</span>
+                        </button>
+                    </div>
+                    <div class="station_compare_global">
+                        <label>
+                            <span swac_lang="data_compare_mode">Visualisation</span>
+                            <select id="station_compare_mode" class="uk-select">
+                                <option value="table" swac_lang="data_compare_table">Table</option>
+                                <option value="chart" swac_lang="data_compare_chart">Diagram</option>
+                            </select>
+                        </label>
+                        <label>
+                            <span swac_lang="data_compare_all_periods">All periods</span>
+                            <span class="station_compare_period_controls">
+                                <input id="station_compare_all_from_date" class="uk-input" type="date" aria-label="From">
+                                <input id="station_compare_all_from_time" class="uk-input" type="time" aria-label="Time">
+                            </span>
+                        </label>
+                        <label>
+                            <span swac_lang="data_compare_to">Bis</span>
+                            <span class="station_compare_period_controls">
+                                <input id="station_compare_all_to_date" class="uk-input" type="date" aria-label="Till">
+                                <input id="station_compare_all_to_time" class="uk-input" type="time" aria-label="Time">
+                            </span>
+                        </label>
+                        <label class="station_compare_attribute_field">
+                            <span swac_lang="data_compare_all_attributes">All attributes</span>
+                            <select id="station_compare_all_attributes" class="uk-select" disabled></select>
+                        </label>
+                        <label class="station_compare_same_time">
+                            <input id="station_compare_same_time" class="uk-checkbox" type="checkbox">
+                            <span swac_lang="data_compare_same_time">Compare same time</span>
+                        </label>
+                        <label class="station_compare_individual_control station_compare_individual_from_control">
+                            <input id="station_compare_individual_from" class="uk-checkbox" type="checkbox">
+                            <span swac_lang="data_compare_individual_from">From individual for collection</span>
+                        </label>
+                        <label class="station_compare_individual_control station_compare_individual_to_control">
+                            <input id="station_compare_individual_to" class="uk-checkbox" type="checkbox">
+                            <span swac_lang="data_compare_individual_to">Till individual for collection</span>
+                        </label>
+                        <label class="station_compare_individual_control station_compare_individual_attributes_control">
+                            <input id="station_compare_individual_attributes" class="uk-checkbox" type="checkbox">
+                            <span swac_lang="data_compare_individual_attributes">Attributes individual for collection</span>
+                        </label>
+                    </div>
+
+                    <div class="station_compare_stations">
+                        <div class="station_compare_label" swac_lang="data_compare_collections">Collections</div>
+                        <div class="station_compare_stationlist"></div>
+                        <button type="button" class="uk-button uk-button-default uk-button-small station_compare_add" swac_lang="data_compare_add_collection">Add collection</button>
+                    </div>
+
+                    <div class="station_compare_actions">
+                        <button type="button" class="uk-button uk-button-primary station_compare_execute" swac_lang="data_compare_execute">Compare</button>
+                        <button type="button" class="uk-button uk-button-default station_compare_reset" swac_lang="data_compare_reset">Reset</button>
+                    </div>
+                </div>
+
+                <div id="station_compare_settings" uk-offcanvas="overlay: true">
+                    <div class="uk-offcanvas-bar">
+                        <button class="uk-offcanvas-close" type="button" uk-close></button>
+                        <h3 swac_lang="data_compare_settings">Settings</h3>
+                        <label class="uk-form-label" for="station_compare_aggregation_amount" swac_lang="data_compare_aggregation">Aggregation</label>
+                        <div class="station_compare_aggregation_controls">
+                            <input id="station_compare_aggregation_amount" class="uk-input" type="number" min="0" step="1" value="0">
+                            <select id="station_compare_aggregation_unit" class="uk-select">
+                                <option value="minutes" swac_lang="data_compare_minutes">Minutes</option>
+                                <option value="hours" swac_lang="data_compare_hours">Hours</option>
+                                <option value="days" swac_lang="data_compare_days">Days</option>
+                            </select>
+                        </div>
+                        <p class="uk-text-meta" swac_lang="data_compare_aggregation_hint">0 shows values.</p>
+                        <button type="button" class="uk-button uk-button-primary uk-button-small station_compare_apply_aggregation" swac_lang="data_compare_apply">Apply</button>
+                        <button type="button" class="uk-button uk-button-default uk-button-small station_compare_reset_aggregation" swac_lang="data_compare_reset">Reset</button>
+                        <hr>
+                        <label class="uk-form-label" for="station_compare_export_format" swac_lang="data_compare_export">Export</label>
+                        <select id="station_compare_export_format" class="uk-select">
+                            <option value="csv">CSV</option>
+                            <option value="json">JSON</option>
+                            <option value="xlsx">XLSX</option>
+                        </select>
+                        <button type="button" class="uk-button uk-button-default uk-margin-small-top station_compare_export" swac_lang="data_compare_download">Download</button>
+                    </div>
+                </div>
+
+                <div class="station_compare_status" aria-live="polite"></div>
+                <div class="station_compare_result"></div>
+            </article>
+        </div>
+        <div id="favs" swa="Favourites"></div>
+    </body>
+</html>

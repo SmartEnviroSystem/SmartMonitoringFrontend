@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SmartMonitoring – Datenverfügbarkeit</title>
+
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css">
+    <link rel="stylesheet" href="../../customisations/global.css">
+
+    <link rel="stylesheet" href="./availability.css?v=10">
+    <link rel="stylesheet" href="./device-selection.css?v=10">
+    <link rel="stylesheet" href="./availability-heatmap.css?v=10">
+
+    <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
+    <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
+    <script src="/SWAC/swac/swac.js" type="module"></script>
+</head>
+<body>
+    <nav id="main_navigation"
+         class="swac_navigation_head"
+         swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC"></nav>
+
+    <div id="userform" swa="User"></div>
+    <div id="translate"
+         swa="Translator FROM ../../data/languages/translations.json"></div>
+
+    <main class="availability-page">
+        <header class="page-heading">
+            <h1>Datenverfügbarkeit</h1>
+            <p>Geräte auswählen und ihre Datenverfügbarkeit im Zeitverlauf anzeigen.</p>
+        </header>
+
+        <section class="panel">
+            <h2>Abfrage</h2>
+
+            <fieldset class="source-fieldset">
+                <legend>Datenquelle</legend>
+                <label>
+                    <input type="radio" name="source" value="demo" checked>
+                    Beispieldaten
+                </label>
+                <label>
+                    <input type="radio" name="source" value="live">
+                    Echte Geräte (Datenbank)
+                </label>
+            </fieldset>
+
+            <p id="deviceStatus" class="status" role="status">
+                Anwendung wird gestartet …
+            </p>
+
+            <div class="selection-grid">
+                <div class="field">
+                    <label for="singleDeviceSelector">Einfachauswahl</label>
+                    <div id="singleDeviceSelector"></div>
+                </div>
+                <div class="field">
+                    <label for="multiDeviceSelector">Mehrfachauswahl</label>
+                    <div id="multiDeviceSelector"></div>
+                </div>
+            </div>
+
+            <div class="selection-summary">
+                <strong>Ausgewählte Geräte</strong>
+                <div id="selectedDevices" class="selected-devices">
+                    Keine Geräte ausgewählt
+                </div>
+            </div>
+
+            <div class="date-controls">
+                <div class="field">
+                    <label for="startDate">Start</label>
+                    <input id="startDate" type="datetime-local">
+                </div>
+                <div class="field">
+                    <label for="endDate">Ende</label>
+                    <input id="endDate" type="datetime-local">
+                </div>
+                <button type="button" id="refreshButton">
+                    Verfügbarkeit prüfen
+                </button>
+                <button type="button" id="reloadDevicesButton">
+                    Geräteliste neu laden
+                </button>
+            </div>
+            <p id="periodInfo" class="period-info"></p>
+        </section>
+
+        <section class="panel">
+            <h2>Zeitdiagramm</h2>
+            <div class="chart-legend">
+                <span><i class="legend-color available"></i> Verfügbar</span>
+                <span><i class="legend-color unavailable"></i> Fehlend</span>
+                <span><i class="legend-color common"></i> Gemeinsam verfügbar</span>
+            </div>
+            <div id="availabilityChart" class="availability-chart"></div>
+        </section>
+
+        <section class="panel">
+            <h2>Datenverfügbarkeit – Heatmap</h2>
+            <p class="panel-description">
+                Prozentuale Datenabdeckung je Gerät und Zeitabschnitt.
+            </p>
+            <div id="availabilityHeatmap" class="heatmap-container"></div>
+        </section>
+
+        <div id="oo_change"
+             class="swac-device-source"
+             swa="Select FROM tbl_observedobject WHERE filter=data_collection,nis"></div>
+    </main>
+
+    <div id="favs" swa="Favourites"></div>
+
+    <script src="./device-selection.js?v=10"></script>
+    <script src="./availability-chart.js?v=10"></script>
+    <script src="./availability-heatmap.js?v=10"></script>
+    <script type="module" src="./availability.js?v=10"></script>
+</body>
+</html>

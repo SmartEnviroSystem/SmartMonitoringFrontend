@@ -1,0 +1,147 @@
+
+.heatmap-container {
+    width: 100%;
+    overflow: hidden;
+}
+
+.heatmap-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    width: 100%;
+}
+
+.heatmap-scroll {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    padding-bottom: 12px;
+}
+
+.heatmap-matrix {
+    width: max-content;
+    min-width: 100%;
+}
+
+.heatmap-axis,
+.heatmap-row {
+    display: grid;
+    grid-template-columns:
+        185px repeat(var(--heatmap-columns), 48px);
+    gap: 3px;
+    margin-bottom: 3px;
+}
+
+.heatmap-corner,
+.heatmap-device-label {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #343448;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.heatmap-column-label {
+    width: 48px;
+    height: 95px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 10px;
+    color: #747789;
+    text-align: center;
+}
+
+.heatmap-cell {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    transition: filter 0.15s ease;
+}
+
+.heatmap-cell:hover {
+    filter: brightness(0.92);
+    outline: 2px solid #536b8e;
+    outline-offset: -2px;
+}
+
+.heatmap-common-row {
+    margin-top: 8px;
+}
+
+.heatmap-common-row .heatmap-device-label {
+    font-weight: 700;
+}
+
+.heatmap-common-row .heatmap-cell {
+    outline: 2px solid #536b8e;
+    outline-offset: -2px;
+}
+
+.heatmap-legend {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    font-size: 11px;
+    font-weight: 600;
+    color: #536b8e;
+    padding-top: 95px;
+}
+
+.heatmap-gradient {
+    width: 22px;
+    height: 220px;
+    background: linear-gradient(
+        to bottom,
+        #8064a2 0%,
+        #b69acd 25%,
+        #d79ab5 50%,
+        #e8c4d5 75%,
+        #dce1e8 100%
+    );
+    border: 1px solid #d1d5db;
+    border-radius: 2px;
+}
+
+.heatmap-message {
+    padding: 16px;
+    font-size: 14px;
+    color: #747789;
+}
+
+@media (max-width: 650px) {
+    .heatmap-axis,
+    .heatmap-row {
+        grid-template-columns:
+            130px repeat(var(--heatmap-columns), 48px);
+    }
+
+    .heatmap-corner,
+    .heatmap-device-label {
+        font-size: 11px;
+    }
+
+    .heatmap-layout {
+        gap: 8px;
+    }
+}

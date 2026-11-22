@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartMonitoring – Geräteauswahl</title>
+
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet"
+          href="/SWAC/swac/libs/uikit/css/uikit.min.css">
+    <link rel="stylesheet"
+          href="../../customisations/global.css">
+    <link rel="stylesheet" href="device-selection.css">
+
+    <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
+    <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
+    <script src="/SWAC/swac/swac.js" type="module"></script>
+    <script src="../../js/general/oo_change.js"></script>
+</head>
+<body>
+
+<nav id="main_navigation"
+     class="swac_navigation_head"
+     swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC">
+</nav>
+
+<div id="userform" swa="User"></div>
+
+<div id="translate"
+     swa="Translator FROM ../../data/languages/translations.json">
+</div>
+
+<main class="page">
+    <h1>Geräteauswahl</h1>
+    <p>Wiederverwendbare Geräteauswahl für SmartMonitoring</p>
+
+    <section class="card">
+        <h2>Einfachauswahl</h2>
+        <p>Ein Gerät auswählen:</p>
+        <div id="singleSelection"></div>
+        <p id="singleResult" class="result">Keine Auswahl</p>
+    </section>
+
+    <section class="card">
+        <h2>Mehrfachauswahl</h2>
+        <p>Mehrere Geräte auswählen:</p>
+        <div id="multiSelection"></div>
+        <div id="multiResult" class="result">
+            Keine Auswahl
+        </div>
+    </section>
+
+    <p id="status">Geräte werden geladen …</p>
+
+    <!-- SWAC-Datenquelle -->
+    <div id="oo_change"
+         class="source"
+         swa="Select FROM tbl_observedobject WHERE filter=data_collection,nis">
+    </div>
+</main>
+
+<div id="favs" swa="Favourites"></div>
+
+<script src="device-selection.js"></script>
+</body>
+</html>
