@@ -11,12 +11,13 @@ window['oo_change_options'] = {
 window['samplingrate_chart_options'] = {
     fromName: new URLSearchParams(window.location.search).get('data_collection'),
     xAxisAttrName: 'ts',
-    yAxisAttrNames: ['swac_sampling_interval_sec'],
+    yAxisAttrNames: ['swac_sampling_interval_sec', 'swac_sampling_median_sec'],
     plugins: new Map([['Linechart', {id: 'Linechart', active: true}]]),
     customAfterAddSet: function (set) {
-        set.swac_sampling_interval_ms = null;
-        set.swac_sampling_median_ms = null;
+        set.swac_sampling_interval_sec = null;
+        set.swac_sampling_median_sec = null;
         this.options.sourceColors[set.swac_fromName + '_swac_sampling_median_sec'] = '#1565c0';
+	this.options.sourceColors[set.swac_fromName + 'swac_sampling_median_sec'] = '#2e7d32';
     },
     customAfterLoad: updateSamplingrateChart
 };
