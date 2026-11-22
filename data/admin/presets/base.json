@@ -633,6 +633,14 @@
                             "active": true
                         },
                         {
+                            "id": 503,
+                            "name": "menu_datavisus_calendar",
+                            "rfrom": "*",
+                            "rto": "datavisus/calendar.html",
+                            "parent": 500,
+                            "active": true
+                        },
+                        {
                             "id": 600,
                             "name": "menu_datastat",
                             "rfrom": "*",
@@ -1031,6 +1039,11 @@
                         {
                             "id": 502,
                             "ckey": "func_datavisus_iconic",
+                            "active": false
+                        },
+                        {
+                            "id": 503,
+                            "ckey": "func_datavisus_calendar",
                             "active": false
                         },
                         {

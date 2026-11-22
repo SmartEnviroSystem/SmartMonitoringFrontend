@@ -1223,7 +1223,37 @@
                     "url": "records/tbl_navigationroute?storage=smartmonitoring"
                 }
             ]
-        },       
+        },
+        {
+            "id": 503,
+            "parent": 500,
+            "name": "func_datavisus_calendar",
+            "version": "3.0 alpha 1",
+            "state": [
+                {
+                    "type": "rest",
+                    "method": "get",
+                    "url": "records/tbl_navigationroute?storage=smartmonitoring&filter=id,eq,503",
+                    "check": "active=true"
+                }
+            ],
+            "activate": [
+                {
+                    "type": "rest",
+                    "method": "put",
+                    "body": "{\"id\": 503, \"active\": true}",
+                    "url": "records/tbl_navigationroute?storage=smartmonitoring"
+                }
+            ],
+            "deactivate": [
+                {
+                    "type": "rest",
+                    "method": "put",
+                    "body": "{\"id\": 503, \"active\": false}",
+                    "url": "records/tbl_navigationroute?storage=smartmonitoring"
+                }
+            ]
+        },
         {
             "id": 600,
             "name": "func_datastat"
