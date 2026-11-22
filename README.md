@@ -23,8 +23,24 @@ die Komponente selbst.
 `configuration.js` muss nicht geändert werden; die Komponente nimmt die SmartData-Adresse aus
 `SWAC_config.datasources`.
 
-Bestehende Installation: Der Menüeintrag kommt über **Admin → Setup → Presets** (fehlende Einträge
-werden ergänzt) und lässt sich unter **Admin → Funktionen** ein- und ausschalten.
+**Neue Installation:** Beim Installieren der Presets in **Admin → Setup** werden Menüroute 503 und
+Systemkonfiguration 503 mit angelegt.
+
+**Bestehende Installation:**
+
+- **„Aktualisieren“** in Admin → Setup ergänzt nur den Eintrag `func_datavisus_calendar` (id 503) in
+  `tbl_systemconfiguration`. Nur dieser Datenblock hat in `base.json` ein `checkfor` (`ckey`); dafür
+  legt das Setup fehlende Einträge per POST an. Bestehende Einträge werden dabei weder geändert
+  noch gelöscht.
+- Die **Menüroute 503** in `tbl_navigationroute` ergänzt „Aktualisieren“ **nicht**, weil dieser
+  Datenblock kein `checkfor` hat. Sie muss einmal per POST an SmartData angelegt werden:
+  `POST /SmartData/smartdata/records/tbl_navigationroute?storage=smartmonitoring` mit
+  `[{"id": 503, "name": "menu_datavisus_calendar", "rfrom": "*", "rto": "datavisus/calendar.html", "parent": 500, "active": true}]`.
+  Danach lässt sich der Eintrag unter **Admin → Funktionen** ein- und ausschalten.
+- ⚠️ **„Deinstallieren“** in Admin → Setup löscht die **ganze Tabelle** (`DELETE` der Collection mit
+  `cascade=true`), also alle Menüeinträge bzw. die ganze Systemkonfiguration, nicht nur den Kalender.
+- ⚠️ Ein Eintrag wird nur mit id gelöscht: `DELETE …/records/tbl_navigationroute/503?storage=smartmonitoring`.
+  Ohne `/503` löscht SmartData **alle** Einträge der Tabelle.
 
 In einer anderen Seite:
 
