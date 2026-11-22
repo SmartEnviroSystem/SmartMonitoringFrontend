@@ -91,3 +91,10 @@ Vollständige Liste: `desc.opts` in `components/Diagramcalendar/Diagramcalendar.
 - Woche mit Zeitumstellung: <http://localhost:8080/SmartMonitoringFrontend/sites/datavisus/calendar.html?data_collection=exampledata_timeseries&view=week&week=2026-03-23&attrs=double_1,double_2>
 - Treppe: <http://localhost:8080/SmartMonitoringFrontend/sites/datavisus/calendar.html?data_collection=exampledata_timeseries&month=2026-03&style=step>
 - ohne Parameter (erstes Gerät, neueste Daten): <http://localhost:8080/SmartMonitoringFrontend/sites/datavisus/calendar.html>
+
+### Offene Fragen
+
+- **`checkfor` für `tbl_navigationroute` in `base.json`, ja oder nein?**
+  Vorteil: „Aktualisieren“ würde neue Menüeinträge wie Route 503 in bestehenden Installationen
+  selbst ergänzen, ohne manuellen POST. Nachteil: Das ändert das Setup-Verhalten für alle
+  Installationen; dort absichtlich gelöschte Menüeinträge würden beim Aktualisieren wieder angeboten.
