@@ -29,6 +29,7 @@ var app_de = {
     menu_datavisus: 'Datenvisualisierung',
     menu_datavisus_charts: 'Diagramme',
     menu_datavisus_iconic: 'Icon-Darstellung',
+    menu_datavisus_calendar: 'Diagrammkalender',
     
     menu_datastat: 'Datenstatistiken',
     menu_datastat_database: 'Datenbankübersicht',
@@ -114,6 +115,9 @@ var app_de = {
     data_charts_headline: 'Diagramme',
     data_charts_overview: 'Zeitverlauf',
     data_charts_filter_desc: 'Filter und Aggregation ver&auml;ndern die angezeigten Datenreihen.',
+    data_calendar_title: 'Daten > Diagrammkalender',
+    data_calendar_headline: 'Diagrammkalender',
+    data_calendar_desc: 'Tagesverl&auml;ufe eines Ger&auml;ts im &Uuml;berblick. Ein Klick auf einen Tag &ouml;ffnet das Tagesdiagramm.',
     data_collect_title: 'Daten > Erfassung',
     data_collect_deactivated: 'Die manuelle Datenerfassung ist f&uuml;r dieses Objekt nicht aktiv.',
     data_compare_title: 'Daten > Vergleich',
@@ -528,6 +532,8 @@ var app_de = {
     func_datavisus_charts_desc: 'Erm&ouml;glicht die Auswertung von Daten mit Diagrammen.',
     func_datavisus_iconic: 'Icondarstellung',
     func_datavisus_iconic_desc: 'Daten mit Icons darstellen.',
+    func_datavisus_calendar: 'Diagrammkalender',
+    func_datavisus_calendar_desc: 'Zeigt die Tagesverl&auml;ufe eines Ger&auml;ts als Monats- oder Wochenkalender.',
     
     func_datastat: 'Datenstatistiken',
     func_datastat_desc: 'Ermöglicht die Anzeige von Statistiken zu den Daten.',

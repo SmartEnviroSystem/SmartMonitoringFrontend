@@ -29,6 +29,7 @@ ar_app_en = {
     menu_datavisus: 'Data Visualization',
     menu_datavisus_charts: 'Charts',
     menu_datavisus_iconic: 'Icon Display',
+    menu_datavisus_calendar: 'Chart Calendar',
 
     menu_datastat: 'Data Statistics',
     menu_datastat_database: 'Database Overview',
@@ -115,6 +116,9 @@ ar_app_en = {
     data_charts_headline: 'Charts',
     data_charts_overview: 'Time series',
     data_charts_filter_desc: 'Filters and aggregation change the displayed data series.',
+    data_calendar_title: 'Data > Chart Calendar',
+    data_calendar_headline: 'Chart Calendar',
+    data_calendar_desc: 'Daily curves of a device at a glance. Click a day to open the day chart.',
 
     data_collect_title: 'Data > Collection',
     data_collect_deactivated: 'Manual data entry is not active for this object.',
@@ -557,6 +561,8 @@ ar_app_en = {
     func_datavisus_charts_desc: 'Enables evaluation of data using charts.',
     func_datavisus_iconic: 'Icon display',
     func_datavisus_iconic_desc: 'Display data using icons.',
+    func_datavisus_calendar: 'Chart calendar',
+    func_datavisus_calendar_desc: 'Shows the daily curves of a device as a month or week calendar.',
 
     func_datastat: 'Data statistics',
     func_datastat_desc: 'Enables displaying statistics about the data.',
