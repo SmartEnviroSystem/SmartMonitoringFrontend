@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <title swac_lang="data_calendar_title">Daten &gt; Diagrammkalender</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" sizes="32x32" href="../../files/icons/32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../../files/icons/16x16.png">
+        <link rel="stylesheet" href="../../css/global.css" />
+
+        <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css" />
+        <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
+        <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
+        <script src="/SWAC/swac/swac.js" type="module"></script>
+
+        <script src="../../js/datavisus/calendar.js"></script>
+        <script src="../../js/general/oo_change.js"></script>
+
+        <link rel="stylesheet" href="../../customisations/global.css" />
+    </head>
+    <body>
+        <nav id="main_navigation" class="swac_navigation_head" swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC"></nav>
+        <div id="userform" swa="User"></div>
+        <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
+        <div id="oo_change" swa="Select FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC"></div>
+
+        <div class="section">
+            <article class="uk-article">
+                <h1 class="uk-heading-bullet" swac_lang="data_calendar_headline">Diagrammkalender</h1>
+                <p class="uk-article-meta" swac_lang="data_calendar_desc">Tagesverl&auml;ufe eines Ger&auml;ts im &Uuml;berblick. Ein Klick auf einen Tag &ouml;ffnet das Tagesdiagramm.</p>
+
+                <!-- SWAC-Komponente components/Diagramcalendar (SWAC-Repo). Tabelle aus ?data_collection=, Monat aus ?month=JJJJ-MM -->
+                <div id="calendar" swa="Diagramcalendar FROM {{data_collection}} OPTIONS calendar_options"></div>
+            </article>
+        </div>
+        <div id="favs" swa="Favourites"></div>
+    </body>
+</html>
