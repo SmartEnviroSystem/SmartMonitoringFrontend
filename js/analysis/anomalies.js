@@ -146,6 +146,9 @@ function buildRequests() {
         start: source.from,
         end: source.to
     });
+    // Only the values of the selected device, if several devices share the collection
+    if (source.filter)
+        common.set('filter', source.filter);
     let measurefreq = document.querySelector('#anomalies_measurefreq').value;
     if (measurefreq)
         common.set('measurefreq', measurefreq);
@@ -295,6 +298,8 @@ function loadSeries() {
         includes: timeAttr + ',' + attribute,
         order: timeAttr + ',ASC'
     });
+    if (source.filter)
+        params.append('filter', source.filter);
     params.append('filter', timeAttr + ',gt,' + source.from);
     params.append('filter', timeAttr + ',lt,' + source.to);
     let url = anomaliesOptions.smartdataUrl + '/smartdata/records/' + encodeURIComponent(collection) + '?' + params.toString();
