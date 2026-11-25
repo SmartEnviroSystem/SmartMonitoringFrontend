@@ -728,6 +728,14 @@
                             "active": true
                         },
                         {
+                            "id": 706,
+                            "name": "menu_data_analysis_overview",
+                            "rfrom": "*",
+                            "rto": "analysis/overview.html",
+                            "parent": 700,
+                            "active": true
+                        },
+                        {
                             "id": 800,
                             "name": "menu_datamap",
                             "rfrom": "*",

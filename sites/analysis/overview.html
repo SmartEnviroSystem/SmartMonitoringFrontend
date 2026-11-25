@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <title swac_lang="data_overview_title">Data &gt; Anomaly overview</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" sizes="32x32" href="../../files/icons/32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../../files/icons/16x16.png">
+        <link rel="stylesheet" href="../../css/global.css" />
+
+        <link rel="stylesheet" href="/SWAC/swac/libs/uikit/css/uikit.min.css" />
+        <script src="/SWAC/swac/libs/uikit/js/uikit.min.js"></script>
+        <script src="/SWAC/swac/libs/uikit/js/uikit-icons.min.js"></script>
+        <script>
+            // Several devices and a period, the overview checks all their numeric columns
+            var overview_source_options = {
+                multiple: true,
+                showPeriod: true,
+                showAttribute: false
+            };
+        </script>
+        <script src="/SWAC/swac/swac.js" type="module"></script>
+        <script src="../../js/analysis/overview.js" type="module"></script>
+
+        <link rel="stylesheet" href="../../customisations/global.css" />
+        <style>
+            /* Small tiles, so a month of days fits */
+            #overview_grid .heatmap-tile { width: 2.75rem; height: 2.25rem; }
+            #overview_grid th { font-size: .75rem; white-space: nowrap; }
+        </style>
+    </head>
+    <body>
+        <nav id="main_navigation" class="swac_navigation_head" swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC"></nav>
+        <div id="userform" swa="User"></div>
+        <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
+
+        <div class="section">
+            <article class="uk-article">
+                <h1 class="uk-heading-bullet" swac_lang="data_overview_headline">Anomaly overview</h1>
+                <p class="uk-article-meta" swac_lang="data_overview_desc">Checks all measured values of the selected devices and shows the most important anomaly per period. Click a coloured cell to see the details.</p>
+
+                <form id="overview_form" class="uk-form-stacked" autocomplete="off">
+                    <div id="overview_source" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC" required></div>
+                    <button type="submit" class="uk-button uk-button-primary uk-margin-top" swac_lang="data_overview_execute">Create overview</button>
+                </form>
+
+                <div class="uk-margin">
+                    <span class="overview_loading" hidden><span uk-spinner="ratio: 0.7"></span></span>
+                    <span class="overview_status uk-text-meta" aria-live="polite"></span>
+                </div>
+                <div class="overview_result uk-margin"></div>
+            </article>
+        </div>
+
+        <div id="favs" swa="Favourites"></div>
+    </body>
+</html>
