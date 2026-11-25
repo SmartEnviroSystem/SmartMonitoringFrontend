@@ -590,11 +590,38 @@ function initialise() {
         clearResult();
     });
     // All checks are selected once the Select component has loaded its options
-    if (window.swac && window.swac.loadedComponents && window.swac.loadedComponents.has(anomaliesOptions.checksId))
-        selectAllChecks();
-    else
-        document.addEventListener('swac_' + anomaliesOptions.checksId + '_complete', selectAllChecks, {once: true});
+    let checksReady = new Promise(function (resolve) {
+        if (window.swac && window.swac.loadedComponents && window.swac.loadedComponents.has(anomaliesOptions.checksId))
+            resolve();
+        else
+            document.addEventListener('swac_' + anomaliesOptions.checksId + '_complete', resolve, {once: true});
+    }).then(selectAllChecks);
     document.addEventListener('swac_' + anomaliesOptions.checksId + '_selection_changed', updateCheckParams);
+    runFromLink(checksReady);
+}
+
+/**
+ * Runs the analysis directly when the URL names device and measured value
+ * (URL parameters of Dataselect), e.g. for a link from the anomaly overview.
+ */
+function runFromLink(checksReady) {
+    let params = new URLSearchParams(window.location.search);
+    if (!params.get('oo_id') || !params.get('attribute'))
+        return;
+    let eventName = 'swac_' + anomaliesOptions.sourceId + '_dataselect_changed';
+    let sourceReady = new Promise(function (resolve) {
+        document.addEventListener(eventName, function onPreselected(evt) {
+            if (evt.detail.changed !== 'set')
+                return;
+            document.removeEventListener(eventName, onPreselected);
+            resolve(evt.detail.selection);
+        });
+    });
+    Promise.all([sourceReady, checksReady]).then(function ([selection]) {
+        // Unknown device or measured value: nothing preselected, nothing to run
+        if (selection && selection.attribute)
+            document.querySelector('#anomalies_form').requestSubmit();
+    });
 }
 
 initialise();
