@@ -42,3 +42,23 @@ document.addEventListener('swac_ready', function () {
         });
     }
 });
+// Device and the attribute to group by, see SWAC component Dataselect
+var groups_source_options = {
+    attributeRequired: true
+};
+
+// The list reads device and attribute from the URL, so the page is reloaded with them
+document.addEventListener('submit', function (evt) {
+    if (evt.target.id !== 'groups_form')
+        return;
+    evt.preventDefault();
+    let comp = document.getElementById('groups_source').swac_comp;
+    let selection = comp ? comp.getSelection() : null;
+    if (!selection || !selection.attribute)
+        return;
+    window.location.search = new URLSearchParams({
+        oo_id: selection.id,
+        data_collection: selection.collection,
+        attribute: selection.attribute
+    }).toString();
+});

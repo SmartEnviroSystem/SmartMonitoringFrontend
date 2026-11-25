@@ -381,6 +381,7 @@ ar_app_en = {
     datagroups_list_desc: 'On this page you will find data sorted by groups.',
     datagroups_list_showonmap: 'Show on map',
     datagroups_list_showlist: 'Show datasets',
+    datagroups_list_show: 'Show',
 
     datagroups_map_title: 'Data Groups > Map',
     datagroups_map_h1: 'Data Groups Map',

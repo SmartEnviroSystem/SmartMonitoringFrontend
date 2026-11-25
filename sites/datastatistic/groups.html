@@ -14,7 +14,6 @@
         <script src="/SWAC/swac/swac.js" type="module"></script>
 
         <script src="../../js/datastatistic/groups.js"></script>
-        <script src="../../js/general/oo_change.js"></script>
         
         <!-- Include customisations -->
         <script src="../../customisations/data/datadesc.js"></script>
@@ -26,29 +25,32 @@
         <div id="userform" swa="User"></div>
         <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
 
-        <div id="oo_change" swa="Select FROM tbl_observedobject WHERE filter=data_collection,nis"></div>
-
         <article class="uk-article">
             <h1 class="uk-article-title" swac_lang="datagroups_list_h1">List of datagroups</h1>
             <p class="uk-article-meta" swac_lang="datagroups_list_desc">This list shows the available datagroups.</p>
+            <!-- Device and the attribute to group by, see SWAC component Dataselect -->
+            <form id="groups_form" class="uk-form-stacked uk-margin" autocomplete="off">
+                <div id="groups_source" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC" required></div>
+                <button type="submit" class="uk-button uk-button-primary uk-margin-top" swac_lang="datagroups_list_show">Show</button>
+            </form>
 
-            <div id="datalist" swa="Present FROM {{data_collection}} WHERE unique={{groupattr}} AND filter=oo_id,neoeq,{{oo_id}}">
+            <div id="datalist" swa="Present FROM {{data_collection}} WHERE unique={{attribute}} AND filter=oo_id,neoeq,{{oo_id}}">
                 <table id="datatable" class="uk-table uk-table-divider uk-table-striped">
                     <tr>
-                        <th swac_lang="{{groupattr}}">{{groupattr}}</th>
+                        <th swac_lang="{{attribute}}">{{attribute}}</th>
                         <th class="data_explore_available_sets">Available sets</th>
                         <th>Options</th>
                     </tr>
                     <tr class="swac_repeatForSet">
                         <td class="func_labels">
-                            {{{groupattr}}}
+                            {{{attribute}}}
                         </td>
                         <td>
                             {avail_sets}
                         </td>
                         <td class="func_datamap">
-                            <a href="../data/map.html?oo_id={{oo_id}}&data_collection={{data_collection}}&filter={{groupattr}},eq,{{{groupattr}}},comps:datamap">datagroups_list_showonmap</a>
-                            <a href="../data/list.html?oo_id={{oo_id}}&data_collection={{data_collection}}&filter={{groupattr}},eq,{{{groupattr}}},comps:datalist">datagroups_list_showlist</a>
+                            <a href="../data/map.html?oo_id={{oo_id}}&data_collection={{data_collection}}&filter={{attribute}},eq,{{{attribute}}},comps:datamap">datagroups_list_showonmap</a>
+                            <a href="../data/list.html?oo_id={{oo_id}}&data_collection={{data_collection}}&filter={{attribute}},eq,{{{attribute}}},comps:datalist">datagroups_list_showlist</a>
                         </td>
                     </tr>
                 </table>

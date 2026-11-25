@@ -373,6 +373,7 @@ var app_de = {
     datagroups_list_desc: 'Auf dieser Seite finden sie Daten nach Gruppen sortiert.',
     datagroups_list_showonmap: 'Auf Karte anzeigen',
     datagroups_list_showlist: 'Datensätze anzeigen',
+    datagroups_list_show: 'Anzeigen',
     
     datagroups_map_title: 'Datengruppen > Karte',
     datagroups_map_h1: 'Datengruppenkarte',
