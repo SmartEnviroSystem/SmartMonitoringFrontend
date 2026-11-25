@@ -707,7 +707,7 @@
                             "id": 703,
                             "name": "menu_data_analysis_anomalies",
                             "rfrom": "*",
-                            "rto": "analysis/anomalies.html",
+                            "rto": "analysis/overview.html",
                             "parent": 700,
                             "active": false
                         },
@@ -724,14 +724,6 @@
                             "name": "menu_data_analysis_samplingrate",
                             "rfrom": "*",
                             "rto": "analysis/samplingrate.html",
-                            "parent": 700,
-                            "active": true
-                        },
-                        {
-                            "id": 706,
-                            "name": "menu_data_analysis_overview",
-                            "rfrom": "*",
-                            "rto": "analysis/overview.html",
                             "parent": 700,
                             "active": true
                         },

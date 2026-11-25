@@ -26,7 +26,6 @@ ar_app_en = {
     menu_data_analysis_anomalies: 'Anomalies',
     menu_data_analysis_heatmap: 'Heatmap',
     menu_data_analysis_samplingrate: 'Sampling rate',
-    menu_data_analysis_overview: 'Anomaly overview',
     menu_data_pipelines: 'Data Pipelines',
     menu_datamap: 'Data Map',
 
@@ -239,6 +238,7 @@ ar_app_en = {
     data_overview_running: 'Checking the devices ...',
     data_overview_skipped: 'No checkable values',
     data_overview_error: 'The overview could not be created',
+    data_overview_normal: 'Normal',
     data_overview_outlier: 'Outlier',
     data_overview_jump: 'Jump',
     data_overview_missing: 'Missing values',

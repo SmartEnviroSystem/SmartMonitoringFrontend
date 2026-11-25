@@ -37,6 +37,8 @@ function setStatus(message, loading = false) {
 
 function getCategories() {
     return {
+        // Green: everything is fine
+        normal: {label: getText('data_overview_normal', 'Normal'), color: '#2ca02c'},
         outlier: {label: getText('data_overview_outlier', 'Outlier'), color: '#d62728', icon: 'warning'},
         jump: {label: getText('data_overview_jump', 'Jump'), color: '#d62728', icon: 'bolt'},
         flatline: {label: getText('data_anomalies_flatline', 'Constant for too long'), color: '#ff7f0e', icon: 'minus'},
@@ -70,6 +72,8 @@ async function buildSeries(selection) {
 
 function bucketLabel(value, bucket) {
     let date = new Date(value);
+    if (bucket === 'minute')
+        return date.toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit'});
     if (bucket === 'hour')
         return date.toLocaleString(undefined, {day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'});
     return date.toLocaleDateString(undefined, {day: '2-digit', month: '2-digit'});
@@ -82,15 +86,18 @@ function bucketLabel(value, bucket) {
  */
 async function renderGrid(result, names) {
     let labels = result.buckets.map(value => bucketLabel(value, result.bucket));
-    overviewState = {buckets: result.buckets, labels: labels, end: result.end, cells: {}};
-    // Heatmap categories: null = normal, missing attribute = no data
+    overviewState = {buckets: result.buckets, labels: labels, start: result.start, end: result.end, cells: {}};
+    // Heatmap categories: null = normal, undefined = no data. The key is always set,
+    // otherwise the Heatmap drops periods in which no device has data.
     let rows = result.rows.map(function (row) {
         overviewState.cells[row.id] = row.cells;
         let set = {id: row.id, name: names[row.id] || row.name};
         row.cells.forEach(function (cell, index) {
             if (cell.category === 'normal')
                 set[labels[index]] = null;
-            else if (cell.category !== 'nodata')
+            else if (cell.category === 'nodata')
+                set[labels[index]] = undefined;
+            else
                 set[labels[index]] = cell.category;
         });
         return set;
@@ -99,6 +106,9 @@ async function renderGrid(result, names) {
     let previous = document.getElementById(overviewOptions.gridId);
     if (previous && previous.swac_comp)
         previous.swac_comp.delete();
+    // SWAC keeps loaded sets and only fills in missing keys on the next load,
+    // the old columns and values would stay
+    delete Model.store.overview_grid_data;
     window.overview_grid_data = rows;
     window.overview_grid_options = {mode: 'categories', categories: getCategories(), attributeOrder: labels};
     let requestor = document.createElement('div');
@@ -145,8 +155,10 @@ async function createOverview(event) {
 }
 
 /**
- * Opens the detail page for the clicked cell: device, the measured value that
- * caused the category and the period of the cell. Normal cells have nothing to show.
+ * Opens the detail page for the clicked cell: device and the measured value that
+ * caused the category. Normal cells have nothing to show.
+ * The whole period of the overview is analysed, because the thresholds are
+ * determined from the period (a single hour or minute holds too few values).
  */
 function openDetails(event) {
     let index = overviewState.labels.indexOf(event.detail.attribute);
@@ -156,8 +168,8 @@ function openDetails(event) {
     let params = new URLSearchParams({
         oo_id: event.detail.set.id,
         attribute: cell.attribute,
-        start: overviewState.buckets[index],
-        end: overviewState.buckets[index + 1] || overviewState.end
+        start: overviewState.start,
+        end: overviewState.end
     });
     window.location.href = overviewOptions.detailPage + '?' + params.toString();
 }

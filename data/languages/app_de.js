@@ -26,7 +26,6 @@ var app_de = {
     menu_data_analysis_anomalies: 'Anomalien',
     menu_data_analysis_heatmap: 'Heatmap',
     menu_data_analysis_samplingrate: 'Samplingrate',
-    menu_data_analysis_overview: 'Anomalie-Übersicht',
     menu_data_pipelines: 'Datenpipelines',
     menu_datamap: 'Datenkarte',
     
@@ -236,6 +235,7 @@ var app_de = {
     data_overview_running: 'Die Geräte werden geprüft ...',
     data_overview_skipped: 'Keine prüfbaren Messwerte',
     data_overview_error: 'Die Übersicht konnte nicht erstellt werden',
+    data_overview_normal: 'Unauffällig',
     data_overview_outlier: 'Ausreißer',
     data_overview_jump: 'Sprung',
     data_overview_missing: 'Fehlende Werte',
