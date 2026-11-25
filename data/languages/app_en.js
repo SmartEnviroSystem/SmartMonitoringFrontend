@@ -488,6 +488,7 @@ ar_app_en = {
     missingperiods: 'Periods with missing data',
     missingperiods_desc: 'Shows periods in which fewer data were collected than expected. The number of expected data points is based on the measurement frequency settings.',
     missingperiods_link: 'Link to retrieve missing data statistics (json)',
+    missingperiods_show: 'Show',
     'Number of missing': 'Number missing',
     about_help_title: 'About > Help',
     about_imprint_title: 'About > Imprint',

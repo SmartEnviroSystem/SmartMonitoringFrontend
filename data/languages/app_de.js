@@ -470,6 +470,7 @@ var app_de = {
     missingperiods: 'Zeitr&auml;ume mit fehlenden Daten',
     missingperiods_desc: 'Zeigt Zeitr&auml;ume in denen weniger Daten erfasst wurden, als erwartet wurden. Die Anzahl der erwarteten Daten ergibt sich aus der Einstellung der Messfrequenz.',
     missingperiods_link: 'Link zum Abruf der Statistik zu fehlenden Daten (json)',
+    missingperiods_show: 'Anzeigen',
     'Number of missing': 'Anzahl Fehlender',
 
     about_help_title: '&Uuml;ber > Hilfe',

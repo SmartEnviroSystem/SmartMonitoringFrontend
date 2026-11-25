@@ -28,3 +28,27 @@ misschart_legend_data.name.values['missingentries'].col = 'red';
 misschart_legend_data.name.values['availableentries'] = {};
 misschart_legend_data.name.values['availableentries'].txt = 'Vorhandene';
 misschart_legend_data.name.values['availableentries'].col = 'green';
+
+// Device and period, see SWAC component Dataselect
+var missing_source_options = {
+    showPeriod: true,
+    showAttribute: false
+};
+
+// The list reads device and period from the URL, so the page is reloaded with them
+document.addEventListener('submit', function (evt) {
+    if (evt.target.id !== 'missing_form')
+        return;
+    evt.preventDefault();
+    let comp = document.getElementById('missing_source').swac_comp;
+    let selection = comp ? comp.getSelection() : null;
+    if (!selection)
+        return;
+    window.location.search = new URLSearchParams({
+        oo_id: selection.id,
+        data_collection: selection.collection,
+        measurerate: selection.set.measurerate,
+        start: selection.from,
+        end: selection.to
+    }).toString();
+});

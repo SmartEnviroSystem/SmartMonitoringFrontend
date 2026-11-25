@@ -14,7 +14,6 @@
         <script src="/SWAC/swac/swac.js" type="module"></script>
 
         <script src="../../js/datastatistic/datamissing.js"></script>
-        <script src="../../js/general/oo_change.js"></script>
 
         <link rel="stylesheet" href="../../customisations/global.css" />
     </head>
@@ -22,7 +21,6 @@
         <nav id="main_navigation" class="swac_navigation_head" swa="Navigation FROM tbl_navigationroute WHERE filter=active,eq,true AND order=id,ASC"></nav>
         <div id="userform" swa="User"></div>
         <div id="translate" swa="Translator FROM ../../data/languages/translations.json"></div>
-        <div id="oo_change" swa="Select FROM tbl_observedobject WHERE filter=data_collection,nis"></div>
         <article>
             <!--<div class="uk-child-width-expand@s" uk-grid>-->
             <!--                <div class="uk-card uk-card-default uk-card-body">
@@ -32,6 +30,10 @@
             <!--</div>-->
             <h1 class="uk-heading-bullet" swac_lang="missingperiods">Periods missing data</h1>
             <p swac_lang="missingperiods_desc">This list contains times where are less datasets found than expected.</p>
+            <form id="missing_form" class="uk-form-stacked uk-margin" autocomplete="off">
+                <div id="missing_source" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC" required></div>
+                <button type="submit" class="uk-button uk-button-primary uk-margin-top" swac_lang="missingperiods_show">Show</button>
+            </form>
             <div id="missingperiods" swa="Present FROM /SmartDataLyser/smartdatalyser/check/missingperiods?smartdataurl={{smartdataurl}}&collection={{data_collection}}&storage=smartmonitoring&dateattribute=ts&measurefreq={{measurerate}}&start={{start}}&end={{end}}">
                 <table class="uk-table uk-table-divider">
                     <thead>
