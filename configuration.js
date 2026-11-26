@@ -74,7 +74,11 @@ var SWAC_config = {
  */
 var userform_options = {
     loginURL: '/SmartUser/smartuser/user/performLogin',
-    afterLogoutLoc: '/index.html',
+    // Locations inside this application must be relative: SWAC prepends
+    // SWAC_config.app_root (= /SmartMonitoringFrontend) to afterLoginLoc,
+    // afterLogoutLoc and registrationLink. A leading slash would resolve
+    // against the server root and drop the application context.
+    afterLogoutLoc: 'index.html',
     accountURL: '/sites/user/account.html',
     activeOn: {
         fromName: 'tbl_systemconfiguration', // Name of the datatable
