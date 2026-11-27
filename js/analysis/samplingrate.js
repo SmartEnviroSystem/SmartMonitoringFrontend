@@ -28,12 +28,20 @@ document.addEventListener('swac_samplingrate_source_dataselect_changed', functio
 window['samplingrate_chart_options'] = {
     fromName: new URLSearchParams(window.location.search).get('data_collection'),
     xAxisAttrName: 'ts',
-    yAxisAttrNames: ['swac_sampling_interval_ms'],
-    plugins: new Map([['Linechart', {id: 'Linechart', active: true}]]),
+    yAxisAttrNames: ['swac_sampling_median_sec', 'swac_sampling_interval_sec'],
+    plugins: new Map([
+	    [ 'Linechart', 
+		    { id: 'Linechart', 
+		      active: true,
+		      sharedYAxis: true
+		    }]
+    ]),
     customAfterAddSet: function (set) {
-        set.swac_sampling_interval_ms = null;
-        set.swac_sampling_median_ms = null;
-        this.options.sourceColors[set.swac_fromName + '_swac_sampling_median_ms'] = '#1565c0';
+        set.swac_sampling_interval_sec = null;
+        set.swac_sampling_median_sec = null;
+        this.options.sourceColors[set.swac_fromName + '_swac_sampling_median_sec'] = '#1565c0';
+	
+	this.options.sourceColors[set.swac_fromName + '_swac_sampling_interval_sec'] = '#2e7d32';
     },
     customAfterLoad: updateSamplingrateChart
 };
