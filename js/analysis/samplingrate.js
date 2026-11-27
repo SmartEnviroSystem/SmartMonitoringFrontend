@@ -3,26 +3,27 @@ import ViewHandler from '/SWAC/swac/ViewHandler.js';
 import SWAC from '/SWAC/swac/swac.js';
 */
 
-// Only the device is needed, the chart shows the intervals of its data table
+// Device and period, the chart shows the intervals of the device in this period
 window['samplingrate_source_options'] = {
-    showAttribute: false
+    showAttribute: false,
+    showPeriod: true
 };
 
-// The chart reads its table from the URL, so a new device reloads the page with it
-document.addEventListener('swac_samplingrate_source_dataselect_changed', function (evt) {
-    let selection = evt.detail.selection;
-    let params = new URLSearchParams(window.location.search);
-    let collection = selection ? selection.collection : null;
-    if (collection === params.get('data_collection'))
+// The chart reads device and period from the URL, so the page is reloaded with them
+document.addEventListener('submit', function (evt) {
+    if (evt.target.id !== 'samplingrate_form')
         return;
-    if (selection) {
-        params.set('data_collection', collection);
-        params.set('oo_id', selection.id);
-    } else {
-        params.delete('data_collection');
-        params.delete('oo_id');
-    }
-    window.location.search = params.toString();
+    evt.preventDefault();
+    let comp = document.getElementById('samplingrate_source').swac_comp;
+    let selection = comp ? comp.getSelection() : null;
+    if (!selection)
+        return;
+    window.location.search = new URLSearchParams({
+        oo_id: selection.id,
+        data_collection: selection.collection,
+        start: selection.from,
+        end: selection.to
+    }).toString();
 });
 
 window['samplingrate_chart_options'] = {

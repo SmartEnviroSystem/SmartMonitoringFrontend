@@ -24,10 +24,13 @@
 	    <h2>Information</h2>
 	    <p>Je höher oder tiefer ein Punkt vom voherigem Messpunkt entfernt ist, desto weiter oder näher ist dieser vom voherigem entfernt.</p>
 	    <p>Mehrere Punkte in einer Linie deuten auf eine gleichmäßige Messung hin, die in gleichen Abständen erfolgt ist.</p>
-            <!-- Only the device (its data table) is selected, see SWAC component Dataselect -->
-            <div id="samplingrate_source" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC"></div>
+            <!-- Device and period, see SWAC component Dataselect -->
+            <form id="samplingrate_form" class="uk-form-stacked uk-margin" autocomplete="off">
+                <div id="samplingrate_source" swa="Dataselect FROM tbl_observedobject WHERE filter=data_collection,nis AND order=name,ASC" required></div>
+                <button type="submit" class="uk-button uk-button-primary uk-margin-top" swac_lang="samplingrate_show">Show</button>
+            </form>
             <p id="samplingrate_status" role="status"></p>
-            <div id="samplingrate_chart" swa="Charts WHERE order=ts,ASC"></div>
+            <div id="samplingrate_chart" swa="Charts WHERE filter=ts,ge,{{start}} AND filter=ts,le,{{end}} AND filter=oo_id,neoeq,{{oo_id}} AND order=ts,ASC"></div>
         </article>
         <div id="favs" swa="Favourites"></div>
     </body>

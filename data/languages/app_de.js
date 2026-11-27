@@ -26,6 +26,7 @@ var app_de = {
     menu_data_analysis_anomalies: 'Anomalien',
     menu_data_analysis_heatmap: 'Heatmap',
     menu_data_analysis_samplingrate: 'Samplingrate',
+    samplingrate_show: 'Anzeigen',
     menu_data_pipelines: 'Datenpipelines',
     menu_datamap: 'Datenkarte',
     

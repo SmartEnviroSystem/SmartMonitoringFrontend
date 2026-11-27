@@ -26,6 +26,7 @@ ar_app_en = {
     menu_data_analysis_anomalies: 'Anomalies',
     menu_data_analysis_heatmap: 'Heatmap',
     menu_data_analysis_samplingrate: 'Sampling rate',
+    samplingrate_show: 'Show',
     menu_data_pipelines: 'Data Pipelines',
     menu_datamap: 'Data Map',
 
